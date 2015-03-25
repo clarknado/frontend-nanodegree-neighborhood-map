@@ -18,7 +18,7 @@ You will learn how design patterns assist in developing a manageable codebase. Y
 Interacting with API servers is the primary function of Front-End Web Developers
 Use of third-party libraries and APIs is a standard and acceptable practice that is encouraged
 
-How will I complete this Project?
+**How will I complete this Project?**
 
 Review our course JavaScript Design Patterns.
 Download the Knockout framework.
@@ -29,7 +29,7 @@ Implement a list view of the identified locations.
 Add additional functionality using third-party APIs when a map marker, search result, or list view entry is clicked (ex. Yelp reviews, Wikipedia, StreetView/Flickr images, etc). If you need a refresher on making AJAX requests to third-party servers, check out our Intro to AJAX course.
 Helpful Resources
 
-None of these are required, but they may be helpful.
+**None of these are required, but they may be helpful.**
 
 Yelp API
 MediaWikiAPI for Wikipedia
@@ -37,11 +37,11 @@ Google Maps Street View Service
 Google Maps
 
 
-Searching and Filtering
+**Searching and Filtering**
 
 We expect your application to provide a search/filter option on the existing map markers that are already displayed. If a list of locations already shows up on a map, we expect your application to offer a search function that filters this existing list. The list view and the markers should update accordingly in real-time. Simply providing a search function through a third-party API is not enough to meet specifications.
 
-What does "errors are handled gracefully" mean?
+**What does "errors are handled gracefully" mean?**
 
 In case of error (e.g. in a situation where a third party api does not return the expected result) we expect your webpage to do one of the following:
 
@@ -53,10 +53,10 @@ Here is a reference article on how to block websites with the hosts file:
 
 http://www.digitaltrends.com/computing/how-to-block-a-website/
 
-Why?
+**Why?**
 
 It is important to handle errors to give users a consistent and good experience with the webpage. Read this blogpost to learn more .
 
-How?
+**How?**
 
 Some JavaScript libraries provide special methods to handle errors. For example: refer to .fail() method discussed here if you use jQuery's ajax() method. We strongly encourage you to explore ways to handle errors in the library you are using to make API calls.
