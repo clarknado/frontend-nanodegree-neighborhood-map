@@ -113,4 +113,5 @@ module.exports = function(grunt) {
 	grunt.registerTask('buildcss', ['sass', 'cssc', 'cssmin']);
 	grunt.registerTask('buildjs', ['jshint', 'uglify']);
 	grunt.registerTask('buildhtml', ['htmlhint']);
+	grunt.registerTask('lint', ['htmlhint', 'jshint']);
 };
