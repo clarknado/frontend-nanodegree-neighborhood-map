@@ -1,1 +1,13 @@
-html, body, #map-canvas { height: 100%; margin: 0; padding: 0;}
+html, body, #map-canvas {
+	height: 100%;
+	margin: 0;
+	padding: 10px;
+}
+
+#new-search {
+	padding: 16px;
+	border: none;
+	background: rgba(0, 0, 0, 0.02);
+	z-index: 2;
+	box-shadow: none;
+}

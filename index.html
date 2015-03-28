@@ -9,15 +9,23 @@
 	<title>Neighborhood Map</title>
 
 	<!-- Links to stylesheets -->
+	<link href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet">
+	<link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link href="assets/css/style.css" rel="stylesheet">
 </head>
 <body>
-	<div id="map-canvas"></div>
-
 	
+		<div id="search-bar" class="col-md-3 text-center">
+			<input id="new-search" placeholder="Search Location" autofocus>
+		</div>
+
+		<div id="map-canvas" class="col-md-9"></div>
+	
+
 	<!-- Links to javascript files -->
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB3xx4vjuhR2InjIehenT9vrfX8NkPRDOI">
 	</script>
+	<script type="text/javascript" src="bower_components/knockout/dist/knockout.js"></script>e
 	<script async src="assets/js/app.js"></script>
 </body>
 </html>
