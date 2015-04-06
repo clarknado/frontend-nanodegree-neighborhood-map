@@ -5,6 +5,7 @@ html, body, #map-canvas {
 }
 
 #new-search {
+	width: 100%;
 	padding: 16px;
 	border: none;
 	background: rgba(0, 0, 0, 0.02);
