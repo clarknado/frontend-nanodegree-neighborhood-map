@@ -1,0 +1,25 @@
+{
+  "name": "neighborhood-map",
+  "version": "0.1.0",
+  "author": "tswei",
+  "dependencies": {
+    "bootstrap": "*",
+    "jquery": "*",
+    "knockout": "*",
+    "underscore": "*"
+  },
+  "homepage": "https://github.com/tswei/neighborhood-map",
+  "authors": [
+    "tsimawei <turner.simawei@gmail.com>"
+  ],
+  "description": "google-maps based location of services",
+  "main": "index.html",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

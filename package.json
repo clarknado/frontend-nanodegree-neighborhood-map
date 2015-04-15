@@ -1,20 +1,29 @@
 {
-	"name" : "javascript-design-patterns",
-	"version" : "0.1.0",
-	"author" : "tswei",
-	"private" : "true",
-	"devDependencies" : {
-		"grunt" : "~0.4.0",
-		"grunt-contrib-cssmin" : "*",
-		"grunt-contrib-sass" : "*",
-		"grunt-contrib-uglify" : "*",
-		"grunt-contrib-watch" : "*",
-		"grunt-cssc" : "*",
-		"grunt-htmlhint": "*",
-		"grunt-contrib-imagemin": "*",
-		"grunt-contrib-jshint": "*",
-		"grunt-imagemagick": "*",
-		"grunt-uncss" : "*",
-		"matchdep" : "*"
-	}
+  "name": "javascript-design-patterns",
+  "version": "0.1.0",
+  "author": "tswei",
+  "private": "true",
+  "dependencies": {
+    "oauth-1.0a": "*",
+    "request": "^2.55.0"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.0",
+    "grunt-bower-concat": "^0.4.0",
+    "grunt-bower-requirejs": "^2.0.0",
+    "grunt-bower-task": "^0.4.0",
+    "grunt-contrib-cssmin": "*",
+    "grunt-contrib-imagemin": "*",
+    "grunt-contrib-jshint": "*",
+    "grunt-contrib-sass": "*",
+    "grunt-contrib-uglify": "*",
+    "grunt-contrib-watch": "*",
+    "grunt-cssc": "*",
+    "grunt-htmlhint": "*",
+    "grunt-imagemagick": "*",
+    "grunt-preen": "^1.2.0",
+    "grunt-uncss": "*",
+    "grunt-wiredep": "^2.0.0",
+    "matchdep": "*"
+  }
 }

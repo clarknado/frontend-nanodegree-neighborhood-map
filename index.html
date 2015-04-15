@@ -9,23 +9,28 @@
 	<title>Neighborhood Map</title>
 
 	<!-- Links to stylesheets -->
-	<link href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet">
-	<link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+	<!-- bower:css -->
+	<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+	<!-- endbower -->
 	<link href="assets/css/style.css" rel="stylesheet">
 </head>
 <body>
 	
 		<div id="search-bar" class="col-md-3 text-center">
-			<input type="text" id="new-search" placeholder="Search Location" data-bind="textInput: googleSearch, event: {keypress: checkEnter}" autofocus>		
+			<input type="text" id="new-search" placeholder="Search Location" data-bind="textInput: googleSearch, event: {keypress: checkEnter}" autofocus>
 		</div>
 
 		<div id="map-canvas" class="col-md-9"></div>
 	
 
 	<!-- Links to javascript files -->
-	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB3xx4vjuhR2InjIehenT9vrfX8NkPRDOI">
-	</script>
-	<script type="text/javascript" src="bower_components/knockout/dist/knockout.js"></script>
+	<!-- bower:js -->
+	<script src="bower_components/jquery/dist/jquery.js"></script>
+	<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+	<script src="bower_components/underscore/underscore.js"></script>
+	<!-- endbower -->
+	<script src="https://maps.googleapis.com/maps/api/js"></script>
+	<script src="bower_components/knockout/dist/knockout.js"></script>
 	<script async src="assets/js/app.js"></script>
 </body>
 </html>

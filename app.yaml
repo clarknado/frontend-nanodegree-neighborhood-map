@@ -1,0 +1,43 @@
+# application: alert-flames-849
+application: neighborhood-map
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: yes
+
+skip_files:
+- ^node_modules$
+- ^\.git$
+- ^lib$
+
+default_expiration: "0d 0h 5m"
+
+
+handlers:
+- url: /favicon\.ico
+  static_files: favicon.ico
+  upload: favicon\.ico
+
+- url: /bower_components
+  static_dir: bower_components
+
+- url: /assets
+  static_dir: assets
+
+# - url: /build/css
+#   static_dir: build/css
+
+# - url: /build/js
+#   static_dir: build/js
+
+# - url: /build/img
+#   static_dir: build/img
+
+- url: .*
+  script: main.app
+
+libraries:
+- name: webapp2
+  version: "2.5.2"
+- name: jinja2
+  version: latest

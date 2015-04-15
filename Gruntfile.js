@@ -106,7 +106,26 @@ module.exports = function(grunt) {
 				files: ['assets/**/*.scss'],
 				tasks: ['buildcss']
 			}
+		},
+		bower: {
+		},
+		wiredep: {
+			task: {
+				src: [
+					'./index.html'
+					]
+			}
+		},
+		bower_concat: {
+			all: {
+				dest: 'build/_bower.js',
+				cssDest: 'build/_bower.css'
+			},
+			dependencies: {
+				'underscore': 'jquery'
+			}
 		}
+
 	});
 
 	grunt.registerTask('default', ['buildjs', 'buildcss', 'buildhtml']);
