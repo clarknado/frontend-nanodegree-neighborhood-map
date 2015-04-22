@@ -59,3 +59,14 @@ It is important to handle errors to give users a consistent and good experience 
 ### How?
 
 Some JavaScript libraries provide special methods to handle errors. For example: refer to .fail() method discussed here if you use jQuery's ajax() method. We strongly encourage you to explore ways to handle errors in the library you are using to make API calls.
+
+# Instructions to Run
+
+To install dependencies, [Node.js](https://docs.npmjs.com/getting-started/installing-node), [Bower](http://bower.io/#install-bower), and [Python](https://www.python.org/downloads/) are required. Instructions on installing these can be found by following the links. 
+
+To install the dependencies, run:
+`pip install -t lib -r requirements.txt`.
+`npm install bower`.
+`bower install`.
+
+A sample configuration file is supplied. This must be modified to include credentials obtained from the following APIs:

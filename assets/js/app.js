@@ -1,7 +1,7 @@
 var yelpSearch = function() {
 	var self = this;
 
-	self.base = "/v2/search?";
+	// self.base = "/v2/search?";
 	self.term = ko.observable("food");
 	self.location = ko.observable();
 	self.cll = ko.observable();
@@ -12,48 +12,59 @@ var yelpSearch = function() {
 		cll : ['cll', self.cll],
 		bounds : ['bounds', self.bounds]
 	};
-	self.url = ko.observable();
+	self.url = '/yelp';
+	self.markerList = ko.observableArray();
+	self.parameters = ko.observable();
+
 
 	self.update = function(center, bounds, location) {
 		// parses response elements from Google to update for new map location parameters
+		// refactor with javascript string.replace prototype
 		self.location(location.split(/ /).join("+"));		
 		self.cll(center.split(/[() ]/).join(""));
 		self.bounds(bounds.split(/\), \(/).join("|").split(/[() ]/).join(""));
-		self.url(self.base + self.urlGen());
+		self.parameters(self.urlGen());
 	};
 
 	self.urlGen = function() {
 		// joins additional variables for Yelp API to be placed into url request
-		var properties = [];
+		var properties = {};
 		for (var key in self.prop) {
 			if (self.prop.hasOwnProperty(key)) {
-				properties.push(self.prop[key][0] + '=' + self.prop[key][1]());
+				properties[self.prop[key][0]] = self.prop[key][1]();
 			}
 		}
-		return properties.join('&');
+		return properties;
 	};
 
-	self.ajax = function(callback) {
+/*	self.ajax = function(callback) {
 		$.ajax({
 			type: 'GET',
-			url: '/yelp' + self.url(),
+			url: '/yelp',
+			contentType: 'json',
+			data: $.param(self.url()),
+			// beforeSend: "Loading Function"
 			dataType: 'json',
 			success: callback
 		});
 	};
 
 	self.responseParse = function(data, textStatus, jqXHR) {
-		console.log(data.location.coordinate);
+		self.markerList.push({
+			loc : data.location.coordinate,
+			title : data.name
+		});
+
 	};
 
 	self.yelp = function() {
 		self.ajax(self.responseParse);
-	};
+	};*/
 };
 
 var ViewModel = function () {
 	var self = this;
-	self.googleSearch = ko.observable();
+	self.googleSearch = ko.observable("San Francsico, CA");
 	self.geocoder = new google.maps.Geocoder();
 	self.yelpSearch = new yelpSearch();
 
@@ -67,14 +78,9 @@ var ViewModel = function () {
 		// Creates map object
 		self.currentMap = new google.maps.Map(element);
 
-		// Sets default location with bounds
-		var location = new google.maps.LatLng(-34.397, 150.644);
-		var southwest = new google.maps.LatLng(-34.64592382130048, 147.9138974609375);
-		var northeast = new google.maps.LatLng(-34.14733356336124, 153.3741025390625);
-		var bounds = new google.maps.LatLngBounds(southwest, northeast);
-		
-		// Calls updateMap function to set map to default location
-		self.updateMap(self.currentMap, location, bounds);
+		// Creates initial call to Geocoding to initialize map at default location
+		self.googleCode();
+
 	};
 
 	self.googleCode = function() {
@@ -82,6 +88,7 @@ var ViewModel = function () {
 	  		if (status == google.maps.GeocoderStatus.OK) {
 	  			updates = results[0].geometry;
 	  			self.yelpSearch.update(updates.location.toString(), updates.viewport.toString(), results[0].formatted_address);
+	  			self.ajax(self.yelpSearch, self.markerPopulate);
 		    	self.updateMap(self.currentMap, updates.location, updates.viewport);
 		  	} else {
 		  		self.errorReturn('geocoder');
@@ -92,7 +99,6 @@ var ViewModel = function () {
 	self.updateMap = function(map, location, bounds) {
 		google.maps.event.addListenerOnce(map, 'idle', function() {
 			// Run Some Function after Map is initialized. (LIKE YELPLING?)
-			self.yelpSearch.yelp();
 		});
 		map.setCenter(location);
 		map.fitBounds(bounds);	
@@ -111,6 +117,18 @@ var ViewModel = function () {
 		} else {
 			console.log(error);
 		}
+	};
+
+	self.ajax = function(obj, callback) {
+		$.ajax({
+			type: 'GET',
+			url: obj.url,
+			contentType: 'json',
+			data: $.param(obj.parameters()),
+			// beforeSend: "Loading Function"
+			dataType: 'json',
+			success: callback
+		});
 	};
 
 	// wikipedia results
@@ -138,16 +156,25 @@ var ViewModel = function () {
 	};
 
 	// Initialize marker array for Google Map Marker objects
-	//self.markers = ko.observableArray([]);
+	self.markers = ko.observableArray([]);
 
-	// Add markers to map from data array
-	/*markerList.forEach(function(markerItem) {
-		var marker = new google.maps.Marker({
-			position : markerItem.position,
-			map : currentMap,
-			title : markerItem.title
+	self.markerPopulate = function(markerList) {
+		// Add markers to map from data array
+		markerList.forEach(function(markerItem) {
+			var loc = markerItem.location.coordinate;
+			var title = markerItem.name;
+
+			var marker = new google.maps.Marker({
+				position : {lat: loc.latitude, lng: loc.longitude},
+				map : self.currentMap,
+				title : title
+			});
+
+			self.markers.push(marker);
 		});
-	});*/
+	}
+
+	// $(document).ajaxComplete(self.markerPopulate());
 
 	google.maps.event.addDomListener(window, 'load', self.init());
 };
