@@ -1,7 +1,6 @@
 var yelpSearch = function() {
 	var self = this;
 
-	// self.base = "/v2/search?";
 	self.term = ko.observable("food");
 	self.location = ko.observable();
 	self.cll = ko.observable();
@@ -15,19 +14,19 @@ var yelpSearch = function() {
 	self.url = '/yelp';
 	self.markerList = ko.observableArray();
 	self.parameters = ko.observable();
+	self.searchResults = ko.observableArray();
 
 
 	self.update = function(center, bounds, location) {
 		// parses response elements from Google to update for new map location parameters
-		// refactor with javascript string.replace prototype
 		self.location(location.split(/ /).join("+"));		
 		self.cll(center.split(/[() ]/).join(""));
 		self.bounds(bounds.split(/\), \(/).join("|").split(/[() ]/).join(""));
-		self.parameters(self.urlGen());
+		self.parameters(self.parameterGen());
 	};
 
-	self.urlGen = function() {
-		// joins additional variables for Yelp API to be placed into url request
+	self.parameterGen = function() {
+		// creates current dictionary of parameters for Yelp API to be used in url request
 		var properties = {};
 		for (var key in self.prop) {
 			if (self.prop.hasOwnProperty(key)) {
@@ -37,29 +36,6 @@ var yelpSearch = function() {
 		return properties;
 	};
 
-/*	self.ajax = function(callback) {
-		$.ajax({
-			type: 'GET',
-			url: '/yelp',
-			contentType: 'json',
-			data: $.param(self.url()),
-			// beforeSend: "Loading Function"
-			dataType: 'json',
-			success: callback
-		});
-	};
-
-	self.responseParse = function(data, textStatus, jqXHR) {
-		self.markerList.push({
-			loc : data.location.coordinate,
-			title : data.name
-		});
-
-	};
-
-	self.yelp = function() {
-		self.ajax(self.responseParse);
-	};*/
 };
 
 var ViewModel = function () {
@@ -67,6 +43,8 @@ var ViewModel = function () {
 	self.googleSearch = ko.observable("San Francsico, CA");
 	self.geocoder = new google.maps.Geocoder();
 	self.yelpSearch = new yelpSearch();
+	self.input = document.getElementById('pac-input');
+	
 
 	self.init = function(element) {
 
@@ -77,9 +55,20 @@ var ViewModel = function () {
 
 		// Creates map object
 		self.currentMap = new google.maps.Map(element);
+		self.currentMap.controls[google.maps.ControlPosition.TOP_LEFT].push(self.input);
+		self.searchBox = new google.maps.places.SearchBox((self.input));
 
 		// Creates initial call to Geocoding to initialize map at default location
 		self.googleCode();
+		google.maps.event.addListener(self.searchBox, 'places_changed', function() {
+			var places = self.searchBox.getPlaces();
+			self.currentMap.fitBounds(self.yelpSearch)
+		});
+
+		google.maps.event.addListener(self.currentMap, 'bounds_changed', function() {
+			var map = self.currentMap;
+			self.searchBox.setBounds(map.getBounds());
+		});
 
 	};
 
@@ -100,6 +89,7 @@ var ViewModel = function () {
 		google.maps.event.addListenerOnce(map, 'idle', function() {
 			// Run Some Function after Map is initialized. (LIKE YELPLING?)
 		});
+		self.searchBox.setBounds(bounds); 
 		map.setCenter(location);
 		map.fitBounds(bounds);	
 	};
@@ -131,30 +121,6 @@ var ViewModel = function () {
 		});
 	};
 
-	// wikipedia results
-	self.wikiResult = function() {
-		var wikiRequestTimeout = setTimeout(function(){
-        	$wikiElem.text("failed to get wikipedia resources");
-    	}, 8000);
-
-		var wikiAPIurl = "http://en.wikipedia.org/w/api.php?format=json&action=query&list=search&srsearch=" + address;
-	    $.ajax( {
-	        url: wikiAPIurl,
-	        dataType: 'jsonp',
-	        success: function (data, textStatus, jqXHR) {
-	            var items = [];
-	            console.log(data);
-	            $.each(data.query.search, function ( index, article) {
-	                items.push('<li class=article><a href="http://en.wikipedia.org/wiki/'+ article.title + '">' +
-	                    article.title + '</a></li>');
-	            });
-	            clearTimeout(wikiRequestTimeout);
-	            $wikiElem.append(items.join( "" ));
-
-	        },
-	    } );
-	};
-
 	// Initialize marker array for Google Map Marker objects
 	self.markers = ko.observableArray([]);
 
@@ -172,11 +138,10 @@ var ViewModel = function () {
 
 			self.markers.push(marker);
 		});
-	}
-
-	// $(document).ajaxComplete(self.markerPopulate());
+	};
 
 	google.maps.event.addDomListener(window, 'load', self.init());
+
 };
 
 ko.applyBindings(new ViewModel());

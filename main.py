@@ -79,8 +79,6 @@ class Yelp(object):
         url_params_lim['term'] = url_params['term']
         #url_params_lim['cll'] = url_params['cll']
         url_params_lim['bounds'] = url_params['bounds']
-        logging.exception(url_params_lim)
-        logging.exception(url_params)
 
         try:
             return self.query_api(url_params_lim)
