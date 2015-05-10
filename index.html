@@ -15,19 +15,35 @@
 	<link href="assets/css/style.css" rel="stylesheet">
 </head>
 <body>
-	
+
 		<div id="search-bar" class="col-md-3 text-center">
-			<input type="text" id="new-search" data-bind="textInput: googleSearch, event: {keypress: checkEnter}" autofocus>
+			<div class="button">
+				<div class="col-md-6 vert-md">Search By</div>
+				<div class="col-md-6">
+					<button data-bind="text: searchField, click: toggleField"></button>
+				</div>
+			</div>
+			<input type="text" id="new-search" data-bind="textInput: search, event: {keypress: checkEnter}" autofocus>
+			<div data-bind="foreach: yelpSearch.results">
+				<div class="result">
+				<div data-bind="text: title, click: $parent.currentPlace">
+				</div>
+				<div data-bind="visible: showing">
+				<div data-bind="text: rating"></div>
+				<div data-bind="text: review_count"></div>
+				<a data-bind="text: title, attr: { href: url, title: title }"></a>
+				</div>
+			</div>
+			</div>
 		</div>
 
 		<div id="map-canvas" class="col-md-9"></div>
-	
+
 
 	<!-- Links to javascript files -->
 	<!-- bower:js -->
 	<script src="bower_components/jquery/dist/jquery.js"></script>
 	<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-	<script src="bower_components/underscore/underscore.js"></script>
 	<!-- endbower -->
 	<script src="https://maps.googleapis.com/maps/api/js"></script>
 	<script src="bower_components/knockout/dist/knockout.js"></script>
