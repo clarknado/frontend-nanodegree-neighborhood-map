@@ -90,6 +90,7 @@ var ViewModel = function () {
 	  			// Parses results for first result's location
 	  			// geometry
 	  			updates = results[0].geometry;
+	  			console.log(results);
 
 	  			// Updates Yelp search parameters
 	  			self.yelpSearch.update(updates.viewport.toString());
@@ -135,7 +136,9 @@ var ViewModel = function () {
 		var markerList = self.yelpSearch.results();
 
 		for (var i=0; i < markerList.length; i++) {
-			markerList[i].marker.setMap(null);
+			if (markerList[i].marker) {
+				markerList[i].marker.setMap(null);
+			}
 		}
 	}
 
@@ -166,7 +169,14 @@ var ViewModel = function () {
 		// Modifies Yelp results to display error if Yelp AJAX
 		// request to proxy fails
 		if (error2 != undefined){
-			self.yelpSearch.results.push({title: "No Yelp Results for your Location Search"});
+			self.yelpSearch.results.push({
+				title: "No Yelp Results for your Location Search",
+				rating: "",
+				review_count: "",
+				url: "",
+				showing: ko.observable(false),
+
+			});
 		}
 	};
 
