@@ -19,7 +19,7 @@ var yelpSearch = function() {
 
 	self.update = function(center, bounds, location) {
 		// parses response elements from Google to update for new map location parameters
-		self.location(location.split(/ /).join("+"));		
+		self.location(location.split(/ /).join("+"));
 		self.cll(center.split(/[() ]/).join(""));
 		self.bounds(bounds.split(/\), \(/).join("|").split(/[() ]/).join(""));
 		self.parameters(self.parameterGen());
@@ -44,7 +44,7 @@ var ViewModel = function () {
 	self.geocoder = new google.maps.Geocoder();
 	self.yelpSearch = new yelpSearch();
 	self.input = document.getElementById('pac-input');
-	
+
 
 	self.init = function(element) {
 
@@ -62,7 +62,18 @@ var ViewModel = function () {
 		self.googleCode();
 		google.maps.event.addListener(self.searchBox, 'places_changed', function() {
 			var places = self.searchBox.getPlaces();
-			self.currentMap.fitBounds(self.yelpSearch)
+			var bounds = places[0].geometry.viewport;
+
+			if (places.length == 0) {
+				return
+			} else if (bounds != undefined) {
+				// clear map of markers
+				// change bounds
+				// ajax yelp and google for previous 'term'
+				self.currentMap.fitBounds(bounds);
+
+			}
+
 		});
 
 		google.maps.event.addListener(self.currentMap, 'bounds_changed', function() {
@@ -89,9 +100,9 @@ var ViewModel = function () {
 		google.maps.event.addListenerOnce(map, 'idle', function() {
 			// Run Some Function after Map is initialized. (LIKE YELPLING?)
 		});
-		self.searchBox.setBounds(bounds); 
+		self.searchBox.setBounds(bounds);
 		map.setCenter(location);
-		map.fitBounds(bounds);	
+		map.fitBounds(bounds);
 	};
 
 	self.checkEnter = function(data, e) {
