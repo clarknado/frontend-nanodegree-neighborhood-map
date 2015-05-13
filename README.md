@@ -1,5 +1,16 @@
 # Neighborhood Map P5 Front-end Nanodegree
 
+## Instructions to Run
+
+To install dependencies, [Node.js](https://docs.npmjs.com/getting-started/installing-node), [Bower](http://bower.io/#install-bower), and [Python](https://www.python.org/downloads/) are required. Instructions on installing these can be found by following the links.
+
+To install the dependencies, run:
+`pip install -t lib -r requirements.txt`.
+`npm install bower`.
+`bower install`.
+
+A sample configuration file is supplied. This must be modified to include credentials obtained from the following APIs:
+
 ## Project Overview
 
 You will develop a single page application featuring a map of your neighborhood or a neighborhood you would like to visit. You will then add additional functionality to this map including highlighted locations, third-party data about those locations and various ways to browse the content.
@@ -19,16 +30,17 @@ Use of third-party libraries and APIs is a standard and acceptable practice that
 
 ## How will I complete this Project?
 
-Review our course JavaScript Design Patterns.
-Download the Knockout framework.
-Write code required to add a full-screen map to your page using the Google Maps API.
-Write code required to add map markers identifying a number of locations your are interested in within this neighborhood.
-Implement the search bar functionality.
-Implement a list view of the identified locations.
-Add additional functionality using third-party APIs when a map marker, search result, or list view entry is clicked (ex. Yelp reviews, Wikipedia, StreetView/Flickr images, etc). If you need a refresher on making AJAX requests to third-party servers, check out our Intro to AJAX course.
-Helpful Resources
+1. Review our course JavaScript Design Patterns.
+2. Download the Knockout framework.
+3. Write code required to add a full-screen map to your page using the Google Maps API.
+4. Write code required to add map markers identifying a number of locations your are interested in within this neighborhood.
+5. Implement the search bar functionality.
+6. Implement a list view of the identified locations.
+7. Add additional functionality using third-party APIs when a map marker, search result, or list view entry is clicked (ex. Yelp reviews, Wikipedia, StreetView/Flickr images, etc). If you need a refresher on making AJAX requests to third-party servers, check out our Intro to AJAX course.
 
-## None of these are required, but they may be helpful.
+## Helpful Resources
+
+### None of these are required, but they may be helpful.
 
 Yelp API
 MediaWikiAPI for Wikipedia
@@ -59,14 +71,3 @@ It is important to handle errors to give users a consistent and good experience 
 ### How?
 
 Some JavaScript libraries provide special methods to handle errors. For example: refer to .fail() method discussed here if you use jQuery's ajax() method. We strongly encourage you to explore ways to handle errors in the library you are using to make API calls.
-
-# Instructions to Run
-
-To install dependencies, [Node.js](https://docs.npmjs.com/getting-started/installing-node), [Bower](http://bower.io/#install-bower), and [Python](https://www.python.org/downloads/) are required. Instructions on installing these can be found by following the links. 
-
-To install the dependencies, run:
-`pip install -t lib -r requirements.txt`.
-`npm install bower`.
-`bower install`.
-
-A sample configuration file is supplied. This must be modified to include credentials obtained from the following APIs:

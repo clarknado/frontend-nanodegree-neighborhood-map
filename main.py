@@ -203,6 +203,10 @@ class Handler(webapp2.RequestHandler):
         pass
 
 class Proxy(Handler):
+    """Proxy handler to direct API request to target url and return
+    the response. Requires use of GET method
+
+    """
 
     def get(self):
         url_params = {}
