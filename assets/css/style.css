@@ -6,10 +6,11 @@
 /*
 #new-search {
 	width: 100%;
-	padding: 16px;
+	padding: 2%;
 	border: none;
-	background: rgba(0, 0, 0, 0.02);
+	background-color: #F7F7F7;
 	z-index: 2;
+<<<<<<< HEAD
 	box-shadow: none;
 }
 */
@@ -61,3 +62,28 @@ html, body, #map-canvas {
 	font-weight: 300;
 }
 
+.col-md-3 {
+	max-width: 250px;
+}
+
+.result {
+	margin: 2%;
+	background-color: #F7F7F7;
+	padding: 2%;
+	border-radius: 2px;
+	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+	display: block;
+}
+
+.error-text {
+	font-size: 3vw;
+	text-align: center;
+}
+
+.button {
+	margin: 2%;
+}
+
+.vert-md {
+	padding-top: 1.5%;
+}

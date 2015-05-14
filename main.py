@@ -36,8 +36,8 @@ jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
 keys = {}
 
 class Credentials(object):
-    # OAuth credential placeholders that must be filled in by users.
-
+    """Creates credential object from config.json file to be used in querying servers
+    """
     def __init__(self):
         with open('config.json') as config:
             self.credentials = json.load(config)
@@ -45,8 +45,9 @@ class Credentials(object):
     def create(self):
         return self.credentials
 
+# Intializes credential object for global access
 cred = Credentials()
-        
+
 
 class Yelp(object):
 
@@ -54,7 +55,6 @@ class Yelp(object):
         """Initiates the url parameters and OAuth Credentials to query the Yelp API.
         """
         self.API_HOST = 'api.yelp.com'
-        self.SEARCH_LIMIT = 5
         self.SEARCH_PATH = '/v2/search/'
         self.BUSINESS_PATH = '/v2/business/'
 
@@ -71,17 +71,11 @@ class Yelp(object):
         """Main function of Yelp instance. Call to obtain results
 
         Args:
-            url_params (str): The url parameters passed in pre-formatted from AJAX call 
+            url_params (str): The url parameters passed in pre-formatted from AJAX call
         """
 
-        url_params_lim = {}
-        #url_params_lim['location'] = url_params['location']
-        url_params_lim['term'] = url_params['term']
-        #url_params_lim['cll'] = url_params['cll']
-        url_params_lim['bounds'] = url_params['bounds']
-
         try:
-            return self.query_api(url_params_lim)
+            return self.query_api(url_params)
         except urllib2.HTTPError as error:
             sys.exit('Encountered HTTP error {0}. Abort program.'.format(error.code))
 
@@ -115,18 +109,11 @@ class Yelp(object):
 
         business_id = businesses[0]['id']
 
-        #print u'{0} businesses found, querying business info for the top result "{1}" ...'.format(
-        #    len(businesses),
-        #    business_id
-        #)
         response = []
 
         for i in businesses:
             response.append(self.get_business(i['id']))
-        #response = self.get_business(business_id)
 
-        #print u'Result for business "{0}" found:'.format(business_id)
-        #pprint.pprint(response, indent=2)
         return response
 
     def search(self, url_params):
@@ -138,13 +125,19 @@ class Yelp(object):
         Returns:
             dict: The JSON response from the request.
         """
-        url_params['limit'] = self.SEARCH_LIMIT
 
         return self.SECURE.request(self.API_HOST, self.SEARCH_PATH, url_params=url_params)
-        
+
 class SecReq(object):
 
     def __init__(self, credentials):
+        """Initializes credentials for secure request object
+
+        Args:
+            key value pairs for 'CONSUMER_KEY', 'CONSUMER_SECRET', 'TOKEN',
+            and 'TOKEN_SECRET'
+        """
+
         self.CONSUMER_KEY = credentials["CONSUMER_KEY"]
         self.CONSUMER_SECRET = credentials["CONSUMER_SECRET"]
         self.TOKEN = credentials["TOKEN"]
@@ -181,7 +174,7 @@ class SecReq(object):
         token = oauth2.Token(self.TOKEN, self.TOKEN_SECRET)
         oauth_request.sign_request(oauth2.SignatureMethod_HMAC_SHA1(), consumer, token)
         signed_url = oauth_request.to_url()
-        
+
         print u'Querying {0} ...'.format(url)
 
         conn = urllib2.urlopen(signed_url, None)
@@ -197,21 +190,23 @@ class SecReq(object):
 class Handler(webapp2.RequestHandler):
 
     def get(self, html):
-    	#html = html + '.min.html'
-        html = html = '.html'
+        html = '.html'
     	try:
     		x = jinja_env.get_template(html)
     	except:
     		# change to redirect for url/uri match
             x = jinja_env.get_template("index.html")
 
-    	# self.response.headers[""]
     	self.response.out.write(x.render())
 
     def post(self, html):
         pass
 
 class Proxy(Handler):
+    """Proxy handler to direct API request to target url and return
+    the response. Requires use of GET method
+
+    """
 
     def get(self):
         url_params = {}
@@ -229,8 +224,8 @@ def handle_404(request, response, exception):
 
 app = webapp2.WSGIApplication([
     webapp2.Route(r'/yelp', handler=Proxy, name='proxyHandler'),
-    webapp2.Route(r'/<html:(build/html/)?\w*-?(\w*)?><:(\.html$)?>', handler=Handler, name='html')    
-], debug=True, ) #config=config.config)
+    webapp2.Route(r'/<html:(build/html/)?\w*-?(\w*)?><:(\.html$)?>', handler=Handler, name='html')
+], debug=True, )
 
 app.error_handlers[404] = handle_404
 

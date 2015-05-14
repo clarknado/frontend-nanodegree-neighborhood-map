@@ -2,11 +2,11 @@
   "name": "neighborhood-map",
   "version": "0.1.0",
   "author": "tswei",
+  "private": "true",
   "dependencies": {
     "bootstrap": "*",
     "jquery": "*",
     "knockout": "*",
-    "underscore": "*"
   },
   "homepage": "https://github.com/tswei/neighborhood-map",
   "authors": [

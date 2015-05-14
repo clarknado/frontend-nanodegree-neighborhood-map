@@ -1,2 +1,4 @@
 oauth2==1.0
 httplib2==0.9
+jinja2==2.7.3
+webapp2==2.5.2
