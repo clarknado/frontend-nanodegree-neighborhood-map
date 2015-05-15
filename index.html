@@ -11,34 +11,43 @@
 	<!-- Links to stylesheets -->
 	<!-- bower:css -->
 	<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+	<link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700">
 	<!-- endbower -->
 	<link href="assets/css/style.css" rel="stylesheet">
 </head>
 <body>
 
-<!-- 		<div id="search-bar" class="col-md-3 text-center">
-			<div class="button">
-				<div class="col-md-6 vert-md">Search By</div>
-				<div class="col-md-6">
-					<button data-bind="text: searchField, click: toggleField"></button>
+		<div id="pac-container" class="text-center">
+			<input type="text" class="controls" id="pac-input" data-bind="textInput: search" autofocus>
+			<div id="results">
+				<div data-bind="template: { foreach: placesList.results,
+											beforeRemove: hideResult,
+											afterAdd: showResult }">
+					<div class="result" data-bind="click: $parent.togglePlace, event: {mouseover: $parent.onPlace, mouseout: $parent.offPlace}">
+						<div>
+							<div class="half" data-bind="text: title">
+							</div>
+							<div class="half">
+								<img class="img-responsvie" data-bind="attr: { src: photo, alt: alt }">
+							</div>
+						</div>
+						<div data-bind="fadeVisible: showing">
+							<div data-bind="text: rating"></div>
+							<div data-bind="text: review_count"></div>
+							<a data-bind="text: title, attr: { href: url, title: title }"></a>
+						</div>
+					</div>
+				</div>
+				<div class="result" data-bind="fadeVisible: populated">
+					<div class="half" data-bind="text: preText, click: prevList"></div>
+					<div class="half" data-bind="text: nexText, click: nextList"></div>
 				</div>
 			</div>
-			<input type="text" id="new-search" data-bind="textInput: search, event: {keypress: checkEnter}" autofocus>
-			<div data-bind="foreach: yelpSearch.results">
-				<div class="result">
-				<div data-bind="text: title, click: $parent.currentPlace">
-				</div>
-				<div data-bind="visible: showing">
-				<div data-bind="text: rating"></div>
-				<div data-bind="text: review_count"></div>
-				<a data-bind="text: title, attr: { href: url, title: title }"></a>
-				</div>
-			</div>
-			</div>
-		</div> -->
 
-  	<input id="pac-input" class="controls" type="text" placeholder="Search Box" data-bind="textInput: googleSearch" autofocus>
-	<div id="map-canvas"></div>
+		</div>
+		<div id="map-canvas"></div>
+
+
 
 
 

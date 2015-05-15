@@ -48,6 +48,10 @@ class Credentials(object):
 # Intializes credential object for global access
 cred = Credentials()
 
+""" Take in url_params. If querying just business, url_params
+should have a 'business' key value, otherwise it will not
+and query should default to using 'term'."""
+
 
 class Yelp(object):
 
@@ -99,20 +103,17 @@ class Yelp(object):
             url_params (str): The url parameters passed in pre-formatted to the API
         """
 
-        response = self.search(url_params)
+        try:
+            response = self.search(url_params)
+            businesses = response.get('businesses')
+            business_id = businesses[0]['id']
+            response = []
+            for i in businesses:
+                response.append(self.get_business(i['id']))
+        except:
+            response = []
+            response.append(self.get_business(url_params['term']))
 
-        businesses = response.get('businesses')
-
-        if not businesses:
-            print u'No businesses for {0} in {1} found.'.format(term, location)
-            return
-
-        business_id = businesses[0]['id']
-
-        response = []
-
-        for i in businesses:
-            response.append(self.get_business(i['id']))
 
         return response
 

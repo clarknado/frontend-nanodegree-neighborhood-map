@@ -1,23 +1,13 @@
-/*html, body, #map-canvas {
-	height: 100%;
-	margin: 0;
-	padding: 10px;
-}*/
-/*
-#new-search {
-	width: 100%;
-	padding: 2%;
-	border: none;
-	background-color: #F7F7F7;
-	z-index: 2;
-<<<<<<< HEAD
-	box-shadow: none;
-}
-*/
 html, body, #map-canvas {
 	height: 100%;
 	margin: 0px;
 	padding: 0px
+}
+
+body {
+	font-family: Roboto;
+	font-size: 15px;
+	font-weight: 300;
 }
 
 .controls {
@@ -33,10 +23,10 @@ html, body, #map-canvas {
 
 #pac-input {
 	background-color: #fff;
+	margin-left: 12px;
 	font-family: Roboto;
 	font-size: 15px;
 	font-weight: 300;
-	margin-left: 12px;
 	padding: 0 11px 0 13px;
 	text-overflow: ellipsis;
 	width: 400px;
@@ -48,11 +38,20 @@ html, body, #map-canvas {
 
 .pac-container {
 	font-family: Roboto;
+	background-color: #fff;
+	margin-left: 12px;
+	font-size: 15px;
+	font-weight: 300;
+	padding: 0 11px 0 13px;
+	z-index: 10;
+	top: 10px;
+	left: 10px;
+	width: 400px;
 }
 
 #type-selector {
-	color: #fff;
-	background-color: #4d90fe;
+	color: #ff0000;
+	background-color: #000000;
 	padding: 5px 11px 0px 11px;
 }
 
@@ -62,17 +61,18 @@ html, body, #map-canvas {
 	font-weight: 300;
 }
 
-.col-md-3 {
-	max-width: 250px;
-}
-
 .result {
-	margin: 2%;
-	background-color: #F7F7F7;
-	padding: 2%;
-	border-radius: 2px;
-	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+	background-color: #fff;
+	font-family: Roboto;
+	font-size: 15px;
+	font-weight: 300;
+	padding: 0 11px 0 13px;
+	text-overflow: ellipsis;
+	width: 400px;
 	display: block;
+	margin-top: 1px;
+	overflow: auto;
+
 }
 
 .error-text {
@@ -80,10 +80,32 @@ html, body, #map-canvas {
 	text-align: center;
 }
 
-.button {
-	margin: 2%;
+#results {
+	margin-top: 5px;
+	margin-left: 12px;
+	border: 1px solid transparent;
+	border-radius: 2px 0 0 2px;
+	outline: none;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+	overflow: auto;
 }
 
-.vert-md {
-	padding-top: 1.5%;
+.selected {
+	transition: margin-top 0.25s, margin-bottom 0.25s;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	border: 1px solid transparent;
+	border-radius: 2px 0 0 2px;
+	outline: none;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.half {
+	position: relative;
+	min-height: 1px;
+	padding-right: 15px;
+	padding-left: 15px;
+	float: left;
+	width: 50%;
+	overflow: auto;
 }
