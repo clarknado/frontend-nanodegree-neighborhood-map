@@ -9,7 +9,11 @@ To install the dependencies, run:
 `npm install bower`.
 `bower install`.
 
-A sample configuration file is supplied. This must be modified to include credentials obtained from the following APIs:
+A sample configuration file template is supplied. This must be modified to include credentials obtained from the following APIs: [Yelp](https://www.yelp.com/developers/documentation/v2/search_api). The configuration file must be renamed to config.json to properly work with app.py.
+
+You may also need to download and install the Google AppEngine SDK. Once installed you can intialize the server by running the dev_appserver.exe in the directory containing the root folder of this project. The google file is usually located at "C:/Program Files/Google/Cloud SDK/google-cloud-sdk/platform/google_appengine/dev_appserver.py".
+
+The server should be initialized at port 8080
 
 ## Project Overview
 
