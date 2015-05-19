@@ -103,17 +103,17 @@ class Yelp(object):
             url_params (str): The url parameters passed in pre-formatted to the API
         """
 
-        try:
-            response = self.search(url_params)
-            businesses = response.get('businesses')
-            business_id = businesses[0]['id']
-            response = []
-            for i in businesses:
-                response.append(self.get_business(i['id']))
-        except:
-            response = []
-            response.append(self.get_business(url_params['term']))
 
+        response = self.search(url_params)
+
+        businesses = response.get('businesses')
+
+        business_id = businesses[0]['id']
+
+        response = []
+
+        for i in businesses:
+            response.append(self.get_business(i['id']))
 
         return response
 
