@@ -536,7 +536,7 @@ ko.bindingHandlers.fadeVisible = {
         ko.unwrap(value) ? $(element).fadeIn() : $(element).fadeOut();
         // Whenever the value changes, add/remove class to parent
         // element
-        ko.unwrap(value) ? $(element).parent().addClass('selected') : $(element).parent().removeClass('selected');
+        ko.unwrap(value) ? $(element).parent().parent().parent().addClass('selected') : $(element).parent().parent().parent().removeClass('selected');
     }
 };
 
