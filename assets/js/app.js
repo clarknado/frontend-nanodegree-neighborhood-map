@@ -93,7 +93,7 @@ var ViewModel = function () {
 	// search
 	self.init = function(element) {
 		// Initial location for google map
-		self.location = ko.observable("San Francsico, CA");
+		self.location = ko.observable("San Francisco, CA");
 
 		// Deprecated values
 		self.searchField = ko.observable('location');

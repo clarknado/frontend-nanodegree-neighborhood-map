@@ -6,7 +6,7 @@
   "dependencies": {
     "bootstrap": "*",
     "jquery": "*",
-    "knockout": "*",
+    "knockout": "*"
   },
   "homepage": "https://github.com/tswei/neighborhood-map",
   "authors": [
