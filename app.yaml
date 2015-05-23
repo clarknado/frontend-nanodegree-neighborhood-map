@@ -13,7 +13,6 @@ skip_files:
 
 default_expiration: "0d 0h 5m"
 
-
 handlers:
 - url: /favicon\.ico
   static_files: favicon.ico

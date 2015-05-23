@@ -1,8 +1,8 @@
 {
-	"yelp" : {
-		"CONSUMER_KEY" : "YOUR_KEY_HERE",
-		"CONSUMER_SECRET" : "YOUR_KEY_HERE",
-		"TOKEN" : "YOUR_KEY_HERE",
-		"TOKEN_SECRET" : "YOUR_KEY_HERE"
-	}
+  "yelp" : {
+    "CONSUMER_KEY" : "YOUR_KEY_HERE",
+    "CONSUMER_SECRET" : "YOUR_KEY_HERE",
+    "TOKEN" : "YOUR_KEY_HERE",
+    "TOKEN_SECRET" : "YOUR_KEY_HERE"
+  }
 }
