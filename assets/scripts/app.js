@@ -1,11 +1,13 @@
+'use strict';
+
 var PlacesList = function() {
 	// Sets access for placesList as self
 	var self = this;
 
 	// Initializes default settings and parameters
-	self.term = ko.observable("");
-	self.location = ko.observable("");
-	self.cll = ko.observable("");
+	self.term = ko.observable('');
+	self.location = ko.observable('');
+	self.cll = ko.observable('');
 	self.bounds = ko.observable();
 	self.limit = ko.observable(10);
 
@@ -24,23 +26,23 @@ var PlacesList = function() {
 
 	// Lists of search results and selections for dispaly on View
 	self.results = ko.observableArray([]);
-	self.yelp_results = {};
-	self.google_results = {};
+	self.yelpResults = {};
+	self.googleResults = {};
 
 	// Parameters to be used in Yelp queries
 	self.parameters = ko.observable();
 
 	// Item skeleton to be used in response parsing to update values // from search results
 	self.Item = function() {
-		this.marker = "";
-		this.title = ko.observable("");
-		this.rating = ko.observable("");
-		this.review_count = ko.observable("");
-		this.url = ko.observable("");
-		this.url_title = ko.observable("");
-		this.location = "";
-		this.photo = ko.observable("");
-		this.alt = ko.observable("");
+		this.marker = '';
+		this.title = ko.observable('');
+		this.rating = ko.observable('');
+		this.reviewCount = ko.observable('');
+		this.url = ko.observable('');
+		this.urlTitle = ko.observable('');
+		this.location = '';
+		this.photo = ko.observable('');
+		this.alt = ko.observable('');
 		this.showing = ko.observable(false);
 		this.clicked = ko.observable(false);
 		this.searched = ko.observable(false);
@@ -49,7 +51,7 @@ var PlacesList = function() {
 	self.update = function(bounds) {
 		// Parses response elements from Google to update search
 		// location parameters
-		self.bounds(bounds.split(/\), \(/).join("|").split(/[() ]/).join(""));
+		self.bounds(bounds.split(/\), \(/).join('|').split(/[() ]/).join(''));
 
 		// stores updated parameters as key value hashtable for use
 		// in AJAX request
@@ -74,9 +76,9 @@ var PlacesList = function() {
 		// AJAX reqeust
 		var properties = {};
 		for (var key in self.prop) {
-			// It ignores properties set to ""
+			// It ignores properties set to ''
 			if (self.prop.hasOwnProperty(key) &&
-				self.prop[key][1]() !== "") {
+				self.prop[key][1]() !== '') {
 				properties[self.prop[key][0]] = self.prop[key][1]();
 			}
 		}
@@ -93,7 +95,7 @@ var ViewModel = function () {
 	// search
 	self.init = function(element) {
 		// Initial location for google map
-		self.location = ko.observable("San Francisco, CA");
+		self.location = ko.observable('San Francisco, CA');
 
 		// Deprecated values
 		self.searchField = ko.observable('location');
@@ -111,8 +113,8 @@ var ViewModel = function () {
 		// Initialize values for list tracking and view display
 		self.list = ko.observableArray([]);
 		self.currentList = [];
-		self.preText = ko.observable("Previous");
-		self.nexText = ko.observable("Next");
+		self.preText = ko.observable('Previous');
+		self.nexText = ko.observable('Next');
 		self.populated = ko.observable(false);
 
 		// Sets default element if no element is passed into function
@@ -190,10 +192,10 @@ var ViewModel = function () {
 		self.geocoder.geocode({ 'address': self.location() }, function(results, status) {
 			// Successful geocoding updates map location
 			// Errors are sent to error handling function
-	  		if (status == google.maps.GeocoderStatus.OK) {
+	  		if (status === google.maps.GeocoderStatus.OK) {
 	  			// Parses results for first result's location
 	  			// geometry
-	  			updates = results[0].geometry;
+	  			var updates = results[0].geometry;
 
 	  			// Updates google map object with new coordinates
 		    	self.updateMap(self.map, updates.location, updates.viewport);
@@ -242,11 +244,11 @@ var ViewModel = function () {
 					title : title
 				});
 			item.title(title);
-			item.rating("Google Rating: " + result.rating);
-			item.url_title(title);
+			item.rating('Google Rating: ' + result.rating);
+			item.urlTitle(title);
 			item.location = location;
 			item.photo(photo);
-			item.alt("Picture of " + title);
+			item.alt('Picture of ' + title);
 
 			// Create unique key from name and geolocation
 			var key = title + location.toString();
@@ -260,7 +262,7 @@ var ViewModel = function () {
 
 
 		// Filter results to 'update' results rather than replace
-		self.resultsFilter(self.placesList.google_results, temp);
+		self.resultsFilter(self.placesList.googleResults, temp);
 		self.keys = iter;
 
 		// Set index of current listing in view
@@ -280,7 +282,7 @@ var ViewModel = function () {
 	self.updateList = function() {
 		var first = self.currentList[0];
 		var last = self.currentList[1];
-		var list = self.placesList.google_results;
+		var list = self.placesList.googleResults;
 		var temp = [];
 		var key;
 
@@ -325,19 +327,19 @@ var ViewModel = function () {
 	self.setState = function(key) {
 		var obj = {};
 		obj.key = key;
-		obj.url = self.urlGen(key);
+		obj.url = self.urlGen();
 		obj.parameters = self.paramGen(key);
 		self.ajax(obj, self.yelpResponseParse);
 	};
 
 	// Returns url for AJAX request
-	self.urlGen = function(key) {
+	self.urlGen = function() {
 		return self.placesList.url;
 	};
 
 	// Returns parameters for AJAX request
 	self.paramGen = function(key) {
-		return self.placesList.searchBounds(self.placesList.google_results[key].location);
+		return self.placesList.searchBounds(self.placesList.googleResults[key].location);
 	};
 
 	// Filters results to only 'update' the result list rather than
@@ -385,21 +387,21 @@ var ViewModel = function () {
 		// Modifies search input to display error if google
 		// Geocoding fails
 		if (error1 === 'ZERO_RESULTS') {
-			self.search("Your Search did not return any Results");
+			self.search('Your Search did not return any Results');
 		}
 		// Modifies map object to display error if google is
 		// unavailable
 		if (error1.message === 'google is not defined') {
-			element = $('#map-canvas');
-			element.addClass("error-text");
-			element.text("Whoops! Google seems to be unavailble!");
+			var element = $('#map-canvas');
+			element.addClass('error-text');
+			element.text('Whoops! Google seems to be unavailble!');
 		}
 		// Modifies url label to display error if Yelp AJAX
 		// request to proxy fails
 		if (error2 !== undefined){
-			var item = self.placesList.google_results[obj.key];
+			var item = self.placesList.googleResults[obj.key];
 
-			item.url_title = "No Yelp Results";
+			item.urlTitle = 'No Yelp Results';
 			self.updateList();
 		}
 	};
@@ -414,12 +416,12 @@ var ViewModel = function () {
 			data: $.param(obj.parameters),
 			// TODO: beforeSend: "Loading Function"
 			dataType: 'json',
-			success: (function(data, textStatus, jqXHR) {
-				callback(obj, data);
-			}),
-			error: (function(jqXHR, textStatus, errorThrown) {
+			success: function(data, textStatus, jqXHR) {
+				callback(obj, data, textStatus, jqXHR);
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
 				self.errorReturn(jqXHR, textStatus, errorThrown, obj);
-			})
+			}
 		});
 	};
 
@@ -431,7 +433,7 @@ var ViewModel = function () {
 		 * establishment
 		 */
 
-		var item = self.placesList.google_results[obj.key];
+		var item = self.placesList.googleResults[obj.key];
 		item.searched(true);
 
 		results.forEach(function(result) {
@@ -440,16 +442,16 @@ var ViewModel = function () {
 			// corresponds to a successful match
 			if (results.length === 1) {
 				item.url(result.url);
-				item.rating("Yelp Rating: " + result.rating);
-				item.review_count("Number of Reviews: " + result.review_count);
+				item.rating('Yelp Rating: ' + result.rating);
+				item.reviewCount('Number of Reviews: ' + result.reviewCount);
 			} else {
-				item.url_title("Yelp Produced Multiple Results!");
+				item.urlTitle('Yelp Produced Multiple Results!');
 			}
 		});
 
 		/* TODO: Create better arrangement of the pointers so that
 		 * view updates automatically with modification of the
-		 * objects within the self.placesList.google_results
+		 * objects within the self.placesList.googleResults
 		 * associative array
 		 */
 		self.updateList();
@@ -463,6 +465,7 @@ var ViewModel = function () {
 	// Toggles marker animation and display of secondary information // for each Yelp result upon click
 	self.togglePlace = function(item, event) {
 		var marker = item.marker;
+		console.log(event, 'togglePlace');
 
 		// Extra toggle of clicked property allows mouseover events
 		// to have the same animations
@@ -480,6 +483,7 @@ var ViewModel = function () {
 	// Toggles on the marker animation and display of secondary
 	// information for each Yelp result upon mouseover
 	self.onPlace = function(item, event) {
+		console.log(event, 'onPlace');
 		if (item.clicked() !== true) {
 			item.marker.setAnimation(google.maps.Animation.BOUNCE);
 			item.showing(true);
@@ -489,6 +493,7 @@ var ViewModel = function () {
 	// Toggles off the marker animation and display of secondary
 	// information for each Yelp result upon mouseover
 	self.offPlace = function(item, event) {
+		console.log(event, 'offPlace');
 		if (item.clicked() !== true) {
 			item.marker.setAnimation(null);
 			item.showing(false);
@@ -533,10 +538,12 @@ ko.bindingHandlers.fadeVisible = {
     update: function(element, valueAccessor) {
         // Whenever the value changes, fade the element in or out
         var value = valueAccessor();
-        ko.unwrap(value) ? $(element).fadeIn() : $(element).fadeOut();
+        $(element)[ko.unwap(value) ? 'fadeIn' : 'fadeOut']();
+        // ko.unwrap(value) ? $(element).fadeIn() : $(element).fadeOut();
         // Whenever the value changes, add/remove class to parent
         // element
-        ko.unwrap(value) ? $(element).parent().parent().parent().addClass('selected') : $(element).parent().parent().parent().removeClass('selected');
+        $(element).closest('.result')[ko.unwrap(value) ? 'addClass' : 'removeClass']('selected');
+        //ko.unwrap(value) ? $(element).parent().parent().parent().addClass('selected') : $(element).parent().parent().parent().removeClass('selected');
     }
 };
 

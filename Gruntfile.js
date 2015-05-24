@@ -195,7 +195,7 @@ module.exports = function(grunt) {
     filerev: {
       dist: {
         src: [
-          '<%= config.dist %>/js/{,*/}*.js',
+          '<%= config.dist %>/scripts/{,*/}*.js',
           '<%= config.dist %>/styles/{,*/}*.css',
           '<%= config.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
           '<%= config.dist %>/styles/fonts/*'
@@ -271,6 +271,19 @@ module.exports = function(grunt) {
           cwd: '<%= config.dist %>',
           src: ['*.html', 'views/{,*/}*.html'],
           dest: '<%= config.dist %>'
+        }]
+      }
+    },
+
+    // ng-annotate tries to make the code safe for minification automatically
+    // by using the Angular long form for dependency injection.
+    ngAnnotate: {
+      dist: {
+        files: [{
+          expand: true,
+          cwd: '.tmp/concat/scripts',
+          src: '*.js',
+          dest: '.tmp/concat/scripts'
         }]
       }
     },
