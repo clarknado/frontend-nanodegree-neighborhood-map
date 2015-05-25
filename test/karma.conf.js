@@ -26,8 +26,7 @@ module.exports = function(config) {
       'bower_components/bootstrap/dist/js/bootstrap.js',
       'bower_components/knockout/dist/knockout.js',
       // endbower
-      "app/scripts/**/*.js",
-      "test/mock/**/*.js",
+      "assets/scripts/**/*.js",
       "test/spec/**/*.js"
     ],
 

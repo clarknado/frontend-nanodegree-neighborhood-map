@@ -4,22 +4,15 @@
   "author": "tswei",
   "private": "true",
   "dependencies": {
-    "bootstrap": "*",
-    "jquery": "*",
-    "knockout": "*"
+    "bootstrap": "~3.3.4",
+    "jquery": "~2.1.4",
+    "knockout": "~3.3.0"
   },
   "homepage": "https://github.com/tswei/neighborhood-map",
   "authors": [
     "tsimawei <turner.simawei@gmail.com>"
   ],
   "description": "google-maps based location of services",
-  "main": "index.html",
-  "license": "MIT",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ]
+  "appPath": "assets",
+  "moduleName": "neighborhoodApp"
 }

@@ -538,7 +538,7 @@ ko.bindingHandlers.fadeVisible = {
     update: function(element, valueAccessor) {
         // Whenever the value changes, fade the element in or out
         var value = valueAccessor();
-        $(element)[ko.unwap(value) ? 'fadeIn' : 'fadeOut']();
+        $(element)[ko.unwrap(value) ? 'fadeIn' : 'fadeOut']();
         // ko.unwrap(value) ? $(element).fadeIn() : $(element).fadeOut();
         // Whenever the value changes, add/remove class to parent
         // element
