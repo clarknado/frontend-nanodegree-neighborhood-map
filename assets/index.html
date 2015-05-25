@@ -27,7 +27,7 @@
     <div class="text-center pac-container">
       <input type="text" class="controls pac-input" data-bind="textInput: search" autofocus>
       <div class="results">
-        <div data-bind="template: { foreach: placesList.results,
+        <div data-bind="template: { foreach: resultsView,
                       beforeRemove: hideResult,
                       afterAdd: showResult }">
           <div class="result" data-bind="click: $parent.togglePlace, event: {mouseover: $parent.onPlace, mouseout: $parent.offPlace}">

@@ -109,7 +109,7 @@ class Yelp(object):
 
     businesses = response.get('businesses')
 
-    business_id = businesses[0]['id']
+    # business_id = businesses[0]['id']
 
     response = []
 

@@ -1,8 +1,9 @@
-node_modules
-bower_components
+node_modules/
+bower_components/
 config.json
-lib
-dist
-build
-.tmp
+lib/
+dist/
+build/
+.tmp/
 .sass-cache
+*.pyc
