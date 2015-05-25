@@ -29,9 +29,10 @@ vendor.add('lib')
 
 import oauth2
 
-template_dir = os.path.dirname(__file__)
+template_dir = os.path.dirname(__file__) + '\build'
+logging.exception(template_dir);
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
-								autoescape = True)
+                autoescape = True)
 
 keys = {}
 
@@ -192,13 +193,13 @@ class Handler(webapp2.RequestHandler):
 
   def get(self, html):
     html = '.html'
-  	try:
-  		x = jinja_env.get_template(html)
-  	except:
-  		# change to redirect for url/uri match
+    try:
+      x = jinja_env.get_template(html)
+    except:
+      # change to redirect for url/uri match
       x = jinja_env.get_template("index.html")
 
-  	self.response.out.write(x.render())
+    self.response.out.write(x.render())
 
   def post(self, html):
     pass
@@ -229,5 +230,3 @@ app = webapp2.WSGIApplication([
 ], debug=True, )
 
 app.error_handlers[404] = handle_404
-
-

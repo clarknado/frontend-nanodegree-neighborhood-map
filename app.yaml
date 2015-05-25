@@ -10,6 +10,10 @@ skip_files:
 - ^\.git$
 - ^lib$
 - ^spec$
+- ^assets$
+- ^test$
+- ^bower_components$
+- ^\.tmp$
 
 default_expiration: "0d 0h 5m"
 
@@ -19,19 +23,25 @@ handlers:
   upload: favicon\.ico
 
 - url: /images
-  static_dir: images
+  static_dir: build/images
 
 - url: /scripts
-  static_dir: scripts
+  static_dir: build/scripts
 
 - url: /styles
-  static_dir: styles
+  static_dir: build/styles
 
 - url: /views
-  static_dir: views
+  static_dir: build/views
+
+- url: /index\.html
+  static_files: build/index.html
+  upload: build/index\.html
 
 - url: .*
   script: main.app
+
+
 
 libraries:
 - name: webapp2
