@@ -15,7 +15,6 @@
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css(.tmp) styles/main.css -->
-
     <link href="styles/main.css" rel="stylesheet">
     <!-- endbuild -->
   </head>
@@ -25,9 +24,9 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <div id="pac-container" class="text-center">
-      <input type="text" class="controls" id="pac-input" data-bind="textInput: search" autofocus>
-      <div id="results">
+    <div class="text-center pac-container">
+      <input type="text" class="controls pac-input" data-bind="textInput: search" autofocus>
+      <div class="results">
         <div data-bind="template: { foreach: placesList.results,
                       beforeRemove: hideResult,
                       afterAdd: showResult }">
@@ -55,7 +54,7 @@
       </div>
 
     </div>
-    <div id="map-canvas"></div>
+    <div class="map-canvas"></div>
 
 
 

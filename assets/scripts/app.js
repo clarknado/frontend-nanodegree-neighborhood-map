@@ -107,8 +107,8 @@ var ViewModel = function () {
 
 		// Grab DOM elements to attach to map and initialize google
 		// search box
-		self.container = document.getElementById('pac-container');
-		self.input = document.getElementById('pac-input');
+		self.container = $('.pac-container')[0];
+		self.input = $('.pac-input')[0];
 
 		// Initialize values for list tracking and view display
 		self.list = ko.observableArray([]);
@@ -119,7 +119,7 @@ var ViewModel = function () {
 
 		// Sets default element if no element is passed into function
 		if (!element) {
-			element = document.getElementById('map-canvas');
+			element = $('.map-canvas')[0];
 		}
 
 		// Creates google map object
@@ -392,7 +392,7 @@ var ViewModel = function () {
 		// Modifies map object to display error if google is
 		// unavailable
 		if (error1.message === 'google is not defined') {
-			var element = $('#map-canvas');
+			var element = $('.map-canvas')[0];
 			element.addClass('error-text');
 			element.text('Whoops! Google seems to be unavailble!');
 		}
