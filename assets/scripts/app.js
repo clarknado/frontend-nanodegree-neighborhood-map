@@ -126,7 +126,6 @@ var ViewModel = function () {
         for (x; x<y; x++) {
           key = self.keys()[x];
           item = self.placesList.googleResults()[key];
-          console.log(item);
           if (!item.searched()) {
             item.searched(true);
             // Sets current state of object for AJAX search
@@ -302,30 +301,6 @@ var ViewModel = function () {
     self.populated(true);
     };
 
-  // Updates list displayed in the View given index boundaries
-  // from currentList variable
-  // self.updateList = function() {
-  //   var first = self.currentList[0];
-  //   var last = self.currentList[1];
-  //   var list = self.placesList.googleResults();
-  //   var temp = [];
-  //   var key, item;
-
-  //   // Iterates over the keys to add objects from the result list
-  //   // into the list for the View
-  //   for (var i=first; i<last; i++) {
-  //     key = self.keys()[i];
-  //     item = list[key];
-  //     temp.push(item);
-  //     if (!item.searched()) {
-  //       item.searched(true);
-  //       // Sets current state of object for AJAX search
-  //       self.setState(key);
-  //     }
-  //   }
-  //   self.results(temp);
-  // };
-
   // Updates the View with the next 5 results only if there are
   // more results
   self.nextList = function() {
@@ -400,18 +375,6 @@ var ViewModel = function () {
     obsList(oldList);
   };
 
-  // Deprecated function for removing markers from the map
-  // self.removeMarkers = function() {
-  //   var markerList = self.results();
-
-  //   for (var i=0; i < markerList.length; i++) {
-  //     if (markerList[i].marker) {
-  //       markerList[i].marker.setMap(null);
-  //     }
-  //   }
-  //   self.results([]);
-  // };
-
   // Handles errors to display appropriate responses to client
   self.errorReturn = function(error1, error2, error3, obj) {
     // Modifies search input to display error if google
@@ -476,14 +439,6 @@ var ViewModel = function () {
         item.urlTitle('Yelp Produced Multiple Results!');
       }
     });
-
-    /* TODO: Create better arrangement of the pointers so that
-     * view updates automatically with modification of the
-     * objects within the self.placesList.googleResults
-     * associative array
-     */
-    // self.updateList();
-
   };
 
   /* TODO: Merge click and mouseover events to a single function
@@ -517,6 +472,7 @@ var ViewModel = function () {
       item.marker.setAnimation(google.maps.Animation.BOUNCE);
       item.showing(true);
     }
+    return true;
   };
 
   // Toggles off the marker animation and display of secondary
@@ -527,6 +483,7 @@ var ViewModel = function () {
       item.marker.setAnimation(null);
       item.showing(false);
     }
+    return true;
   };
 
 

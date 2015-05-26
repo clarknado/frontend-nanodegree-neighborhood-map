@@ -30,26 +30,25 @@
         <div data-bind="template: { foreach: resultsView,
                       beforeRemove: hideResult,
                       afterAdd: showResult }">
-          <div class="result" data-bind="click: $parent.togglePlace, event: {mouseover: $parent.onPlace, mouseout: $parent.offPlace}">
+          <div class="result" data-bind="click: $parent.togglePlace, event: {mouseover: $parent.onPlace, mouseleave: $parent.offPlace}">
             <div>
-              <div class="half">
-                <div data-bind="text: title"></div>
-                <div data-bind="fadeVisible: showing">
+              <div class="five-zero">
+                <div class="title" data-bind="text: title"></div>
+                <div class="secondary-info" data-bind="fadeVisible: showing">
                   <div data-bind="text: rating"></div>
-                  <div data-bind="text: reviewCount"></div>
                   <a data-bind="text: urlTitle, attr: { href: url, title: urlTitle }"></a>
                 </div>
               </div>
-              <div class="half">
-                <img class="img-responsvie" data-bind="attr: { src: photo, alt: alt }" alt="">
+              <div class="five-zero">
+                <img class="img-responsive" data-bind="attr: { src: photo, alt: alt }" alt="">
               </div>
             </div>
 
           </div>
         </div>
         <div class="result" data-bind="fadeVisible: populated">
-          <div class="half" data-bind="text: preText, click: prevList"></div>
-          <div class="half" data-bind="text: nexText, click: nextList"></div>
+          <div class="five-zero" data-bind="text: preText, click: prevList"></div>
+          <div class="five-zero" data-bind="text: nexText, click: nextList"></div>
         </div>
       </div>
 
