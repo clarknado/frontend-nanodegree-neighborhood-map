@@ -1,5 +1,9 @@
 'use strict';
 
+/** A constructor for the Model Space.
+ * @constructor
+ * @namespace PlacesList
+ */
 var PlacesList = function() {
   // Sets access for placesList as self
   var self = this;
@@ -25,17 +29,22 @@ var PlacesList = function() {
   self.url = '/yelp';
 
   // Lists of search results and selections for dispaly on View
-  // self.results = ko.computed();
-  self.yelpResults = ko.observableArray();
-  self.googleResults = ko.observableArray().extend({ rateLimit: 250 });
+  self.placeResults = ko.observableArray().extend({ rateLimit: 250 });
 
-  // Parameters to be used in Yelp queries
+  // Parameters to be used in ajax queries
+  // Currently used specifically for Yelp
   self.parameters = ko.observable();
 
-  // Item skeleton to be used in response parsing to update values // from search results
+  /** A constructor for an item in the Model Space. Sets default
+   * values and initializes items as knockout observables to update
+   * the view.
+   * @constructor Item
+   * @memberof PlacesList
+   * @namespace PlacesList.Item
+   */
   self.Item = function() {
-    this.marker = '';
-    this.infoWindow = '';
+    this.marker = new google.maps.Marker({});
+    this.infoWindow = new google.maps.InfoWindow({});
     this.infoContent = ko.observable('');
     this.title = ko.observable();
     this.rating = ko.observable();
@@ -49,21 +58,29 @@ var PlacesList = function() {
     this.clicked = ko.observable(false);
     this.searched = ko.observable(false);
     this.key = ko.observable();
+    this.markerImg = {};
   };
 
+  /** Parses response elements from Google to update search
+   * location and stores updated parameters as 'key' value
+   * hashtable for use in AJAX request.
+   * @method update
+   * @memberof PlacesList
+   * @param {string} bounds - google maps LatLng.toString()
+   */
   self.update = function(bounds) {
-    // Parses response elements from Google to update search
-    // location parameters
     self.bounds(bounds.split(/\), \(/).join('|').split(/[() ]/).join(''));
 
-    // stores updated parameters as key value hashtable for use
-    // in AJAX request
     return self.urlGen();
   };
 
+  /** Creates approximately a 10sq meter boundary around a given
+   * location
+   * @method searchBounds
+   * @memberof PlacesList
+   * @param {LatLng} location - google maps LatLng object
+   */
   self.searchBounds = function(location) {
-    // Creates approximately a 10sq meter boundary around a
-    // given location
     var lat = parseFloat(location.lat());
     var lng = parseFloat(location.lng());
     var tmod = parseFloat(0.0001);
@@ -74,12 +91,16 @@ var PlacesList = function() {
     return self.update(latlng.toString());
   };
 
+  /** Creates key value hashtable for parameters to be passed in
+   * AJAX request.
+   * @memberof PlacesList
+   * @method urlGen
+   * @return {object} associativeArray - key value pairs of properties
+   */
   self.urlGen = function() {
-    // Creates key value hashtable for parameters to be passed in
-    // AJAX reqeust
     var properties = {};
     for (var key in self.prop) {
-      // It ignores properties set to ''
+      // Ignores properties set to ''
       if (self.prop.hasOwnProperty(key) &&
         self.prop[key][1]() !== '') {
         properties[self.prop[key][0]] = self.prop[key][1]();
@@ -90,12 +111,20 @@ var PlacesList = function() {
 
 };
 
+/** A constructor for the viewModel.
+ * @constructor ViewModel
+ * @namespace ViewModel
+ */
 var ViewModel = function () {
   // Sets access for ViewModel as self
   var self = this;
 
-  // Initiating function for establishing map element and initial
-  // search
+  /** Initiating function for establishing map element and initial
+   * search.
+   * @method init
+   * @memberof ViewModel
+   * @param {string} [element] - element to attach google map
+   */
   self.init = function(element) {
     // Initial location for google map
     self.location = ko.observable('San Francisco, CA');
@@ -114,7 +143,7 @@ var ViewModel = function () {
     self.input = $('.pac-input')[0];
 
     // Initialize values for list tracking and view display
-    self.currentInfoWindow = new google.maps.InfoWindow({});
+    self.currentItem = new self.placesList.Item();
     self.keys = ko.observableArray().extend({ rateLimit: 250 });
     self.list = ko.observableArray([]);
     self.currentList = ko.observable();
@@ -129,7 +158,7 @@ var ViewModel = function () {
         var key, item;
         for (x; x<y; x++) {
           key = self.keys()[x];
-          item = self.placesList.googleResults()[key];
+          item = self.placesList.placeResults()[key];
           if (!item.searched()) {
             item.searched(true);
             // Sets current state of object for AJAX search
@@ -163,8 +192,7 @@ var ViewModel = function () {
      * excluively rely upon the search box functionality
      */
 
-    // Creates initial call to Geocoding to initialize map at
-    // default location
+    // Initial call to Geocoding to set map at default location
     self.googleCode();
 
     // Adds listener to search box to detect submission either by
@@ -177,8 +205,8 @@ var ViewModel = function () {
       // determine if submission was a location search
       var bounds = places[0].geometry.viewport;
 
-      // Simple logic to determine if submission was a
-      // location search or an establishment search
+      // Determine if submission was a location search or an
+      // establishment search
       if (places.length === 0) {
         return;
       } else if (bounds !== undefined) {
@@ -204,14 +232,21 @@ var ViewModel = function () {
 
   };
 
-  // Runs query results functions with new places search
+  /** Runs query results functions with new places search.
+   * @method query
+   * @memberof ViewModel
+   * @param {json} [places] - Results from google places search
+   */
   self.query = function(places) {
     if (places !== undefined) {
       self.googleResponseParse(places);
     }
   };
 
-  // Codes a string address into geocoordinates to update map
+  /** Codes a string address into geocoordinates to update map.
+   * @method googleCode
+   * @memberof ViewModel
+   */
   self.googleCode = function() {
     // Queries google database with a string address to return a
     // LatLng object
@@ -231,20 +266,29 @@ var ViewModel = function () {
       });
   };
 
-  // Updates map object center and bounds
+  /** Updates map object center and bounds.
+   * @method updateMap
+   * @memberof ViewModel
+   * @param {Map} map - preinitialized google maps map object
+   * @param {LatLng} location - google maps LatLng object
+   * @param {LatLngBounds} bounds - google maps LatLngBounds object
+   */
   self.updateMap = function(map, location, bounds) {
-    // Requires google LatLng and LatLngBounds objects
-    // respectively
     map.setCenter(location);
     map.fitBounds(bounds);
   };
 
-  // Parses google places search to update the list in the view and
-  // store in the placesList model
+  /** Parses google places search to update the list in teh view and
+   * store in the placesList model.
+   * @method googleResponseParse
+   * @memberof ViewModel
+   * @param {json} response - json response from google maps places search
+   */
   self.googleResponseParse = function(results) {
     var temp = {};
     var iter = [];
     var len;
+    var newBounds = new google.maps.LatLngBounds();
 
     // Iterates over results, creating and updating an model
     // item for use by the viewModel
@@ -257,8 +301,7 @@ var ViewModel = function () {
       var photo;
       if (result.photos) {
         photo = result.photos[0].getUrl({
-          'maxWidth' : 100,
-          'maxHeight' : 100});
+          'maxHeight' : 75});
       } else {
         photo = '';
       }
@@ -267,24 +310,33 @@ var ViewModel = function () {
       var item = new self.placesList.Item();
 
       // Set item's properties
-      item.marker = new google.maps.Marker({
-          position : location,
-          title : title
-        });
-      item.infoContent(title);
-      item.infoWindow = new google.maps.InfoWindow({});
+      item.marker.setPosition(location);
+      item.marker.setTitle(title);
       item.title(title);
       item.rating('Google Rating: ' + result.rating);
       item.urlTitle(title);
       item.location = location;
       item.photo(photo);
       item.alt('Picture of ' + title);
+      item.markerImg = {
+        url: result.icon,
+        size: new google.maps.Size(71, 71),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(17, 34),
+        scaledSize: new google.maps.Size(25, 25)
+      };
+      item.marker.setIcon(item.markerImg);
 
+      // Extends the bounds to include the item's location
+      newBounds.extend(location);
+
+      // Adds details and event listeners to markers/infowindows
       self.addMouseOver(item);
       self.addInfo(item);
       self.wikiRequest(item);
 
-      item.infoWindow.setContent(item.infoCalculated());
+      // Updates info window to have initial value
+      self.updateInfo(item, title);
 
       // Create unique key from name and geolocation
       var key = title + location.toString();
@@ -297,8 +349,11 @@ var ViewModel = function () {
       iter.push(key);
       }
 
+    // Resets viewport to contain all new searched items
+    self.map.fitBounds(newBounds);
+
     // Filter results to 'update' results rather than replace
-    self.resultsFilter(self.placesList.googleResults, temp, self.keys);
+    self.resultsFilter(self.placesList.placeResults, temp, self.keys);
 
     // Set index of current listing in view
     len = self.keys().length;
@@ -309,23 +364,27 @@ var ViewModel = function () {
     }
 
     // Update list displayed in the View
-    // self.updateList();
     self.populated(true);
     };
 
-  // Updates the View with the next 5 results only if there are
-  // more results
+  /** Updates the View with the next 5 results only if there are
+   * more results.
+   * @method nextList
+   * @memberof ViewModel
+   */
   self.nextList = function() {
     var first = self.currentList()[1];
     var last = first + 5;
     if (last <= self.keys().length) {
       self.currentList([first, last]);
     }
-    // self.updateList();
   };
 
-  // Updates the View with the previous 5 results only if there
-  // are previous results
+  /** Updates the View with the previous 5 results only if there
+   * are previous results.
+   * @method prevList
+   * @memberof ViewModel
+   */
   self.prevList = function() {
     var last = self.currentList()[0];
     var first;
@@ -333,11 +392,14 @@ var ViewModel = function () {
       first = last - 5;
       self.currentList([first, last]);
     }
-    // self.updateList();
   };
 
-  // Sets current state of object for AJAX request and for
-  // identification during parsing of correct object to modify
+  /** Sets current state of object for AJAX request and for
+   * identification during parsing of correct object to modify.
+   * @method setState
+   * @memberof ViewModel
+   * @param {string} key - Key from key:value pair of Item
+   */
   self.setState = function(key) {
     var obj = {};
     obj.key = key;
@@ -346,27 +408,52 @@ var ViewModel = function () {
     self.ajax(obj, self.yelpResponseParse);
   };
 
+  /** Opens Info Window attached to marker when mouseover event
+   * occurs on the marker item and changes the Icon. It also reverts
+   * the previous item's icon and closes its info window.
+   * @method addMouseOver
+   * @memberof ViewModel
+   * @param {object} item - item object from Model database
+   */
   self.addMouseOver = function(item) {
-    var marker = item.marker;
-    var infowindow = item.infoWindow;
-    google.maps.event.addListener(marker, 'mouseover', function() {
-      self.currentInfoWindow.close();
-      infowindow.open(self.map, marker);
-      self.currentInfoWindow = infowindow;
+    // Reverts previous item's marker state and modifies new item's marker
+    // and updates the 'current item'
+    google.maps.event.addListener(item.marker, 'mouseover', function() {
+      self.currentItem.infoWindow.close();
+      self.currentItem.marker.setIcon(self.currentItem.markerImg);
+      item.infowindow.open(self.map, item.marker);
+      item.marker.setIcon(null);
+      self.currentItem = item;
     });
   };
 
+  /* TODO: change wikipedia request to search by geolocation of place
+   * rather than name.
+   */
+
+  /** Initiates wikipedia search for articles related to the name
+   * of the item.
+   * @method wikiRequest
+   * @memberof ViewModel
+   * @param {object} item - item object from Model database
+   */
   self.wikiRequest = function(item) {
-    // Set Wikipedia AJAX request here
+    // Set text return for AJAX failure
     var fail = 'failed to get wikipedia resources';
+
+    // Set timeout to limit wait time for AJAX response
     var wikiRequestTimeout = setTimeout(function(){
       self.updateInfo(item, fail);
     }, 8000);
 
+    // Set API url for request
     var wikiAPIurl = 'http://en.wikipedia.org/w/api.php?format=json&action=query&list=search&srsearch=' + item.title().split(' ').join('+');
+
+    // AJAX function
     $.ajax({
       url: wikiAPIurl,
       dataType: 'jsonp',
+      // Parse results into html elements to insert into info window
       success: function (data) {
         var temp = ['<ul>'];
         $.each(data.query.search, function (index, article) {
@@ -388,30 +475,53 @@ var ViewModel = function () {
     });
   };
 
+  /** Updates the info window for an item with new content.
+   * @method updateInfo
+   * @memberof ViewModel
+   * @param {object} item - item object from Model database
+   * @param {string} content - valid html formatted string element
+   */
   self.updateInfo = function(item, content) {
     item.infoContent(content);
     item.infoWindow.setContent(item.infoCalculated());
-    console.log(item.infoWindow.getContent());
   };
 
+  /** Adds infoCalculated to the item object as a knockout computed
+   * object.
+   * @method addInfo
+   * @memberof ViewModel
+   * @param {object} item - item object from Model database
+   */
   self.addInfo = function(item) {
     item.infoCalculated = ko.computed(function() {
       return '<div class="info-window">'+ item.infoContent() + '</div>';
     });
   };
 
-  // Returns url for AJAX request
+  /** Returns url for AJAX request.
+   * @method urlGen
+   * @memberof ViewModel
+   */
   self.urlGen = function() {
     return self.placesList.url;
   };
 
-  // Returns parameters for AJAX request
+  /** Returns parameters for AJAX request.
+   * @method paramGen
+   * @memberof ViewModel
+   */
   self.paramGen = function(key) {
-    return self.placesList.searchBounds(self.placesList.googleResults()[key].location);
+    return self.placesList.searchBounds(self.placesList.placeResults()[key].location);
   };
 
-  // Filters results to only 'update' the result list rather than
-  // completely replace with new results
+  /** Filters results to only 'update' the result list rather than
+   * completely replace with new results.
+   * @method resultsFilter
+   * @memberof ViewModel
+   * @param {object} obsList - Observable Array of current Item objects
+   * @param {array} newList - Array of new Item objects
+   * @param {object} keys - Observable Array of current keys
+   */
   self.resultsFilter = function(obsList, newList, keys) {
     var oldList = obsList();
     var temp = [];
@@ -440,17 +550,26 @@ var ViewModel = function () {
       }
     }
 
+    // Creates new list of keys after updated oldList is created
     for (key in oldList) {
       if (oldList.hasOwnProperty(key)) {
         temp.push(key);
       }
     }
 
+    // Updates obsList and keys at almost same time
     obsList(oldList);
     keys(temp);
   };
 
-  // Handles errors to display appropriate responses to client
+  /** Handles errors to display appropriate responses to client
+   * @method errorReturn
+   * @memberof ViewModel
+   * @param {string} error1 - string of error result (jqXHR)
+   * @param {string} error2 - string of error result (textStatus)
+   * @param {string} error3 - string of error result (textStatus)
+   * @param {object} obj - itentifier object to link AJAX and item object
+   */
   self.errorReturn = function(error1, error2, error3, obj) {
     // Modifies search input to display error if google
     // Geocoding fails
@@ -467,14 +586,18 @@ var ViewModel = function () {
     // Modifies url label to display error if Yelp AJAX
     // request to proxy fails
     if (error2 !== undefined && obj !== undefined){
-      var item = self.placesList.googleResults()[obj.key];
+      var item = self.placesList.placeResults()[obj.key];
       item.urlTitle = 'No Yelp Results';
-      self.updateList();
     }
   };
 
-  // Generic AJAX format for potential expansion of AJAX requests
-  // to other databases
+  /** Generic AJAX format for potential expansion of AJAX requests
+   * to other databases
+   * @method ajax
+   * @memberof ViewModel
+   * @param {object} obj - itentifier object to link AJAX and item object
+   * @param {function} callback - function to be used as callback
+   */
   self.ajax = function(obj, callback) {
     $.ajax({
       type: 'GET',
@@ -492,7 +615,12 @@ var ViewModel = function () {
     });
   };
 
-  // Parses Yelp response and updates the model
+  /** Parses Yelp response and updates the items in the model
+   * @method yelpResponseParse
+   * @memberof ViewModel
+   * @param {object} obj - itentifier object to link AJAX and item object
+   * @param {string} results - results from yelp AJAX response
+   */
   self.yelpResponseParse = function(obj, results) {
     /* TODO: Create a better implementation to match up google
      * results with yelp reviews and pages. Consider some simple
@@ -500,7 +628,7 @@ var ViewModel = function () {
      * establishment
      */
 
-    var item = self.placesList.googleResults()[obj.key];
+    var item = self.placesList.placeResults()[obj.key];
 
     results.forEach(function(result) {
 
@@ -517,70 +645,89 @@ var ViewModel = function () {
     });
   };
 
-  /* TODO: Merge click and mouseover events to a single function
-   * call.
+  /** Toggles marker animations and display of secondary information
+   * for each Yelp result upon click
+   * @method togglePlace
+   * @memberof ViewModel
+   * @param {object} item - item object from Model database
+   * @param {string} event - event triggering function call
    */
-
-  // Toggles marker animation and display of secondary information // for each Yelp result upon click
   self.togglePlace = function(item, event) {
     var marker = item.marker;
     if(event === 'togglePlace') {
-    }
-
-    // Extra toggle of clicked property allows mouseover events
-    // to have the same animations
-    if (item.clicked() === true) {
-      marker.setAnimation(null);
-      item.showing(false);
-      item.clicked(false);
-    } else {
-        marker.setAnimation(google.maps.Animation.BOUNCE);
-        item.showing(true);
-        item.clicked(true);
+      // Extra toggle of clicked property allows mouseover events
+      // to have the same animations
+      if (item.clicked() === true) {
+        marker.setAnimation(null);
+        item.showing(false);
+        item.clicked(false);
+      } else {
+          marker.setAnimation(google.maps.Animation.BOUNCE);
+          item.showing(true);
+          item.clicked(true);
       }
-      return true;
+    }
+    return true;
   };
 
-  // Toggles on the marker animation and display of secondary
-  // information for each Yelp result upon mouseover
+  /** Toggles on the marker animation and display of secondary
+   * information for each Yelp result upon mouseover
+   * @method onPlace
+   * @memberof ViewModel
+   * @param {object} item - item object from Model database
+   * @param {string} event - event triggering function call
+   */
   self.onPlace = function(item, event) {
     if(event === 'onPlace') {
-    }
-    if (item.clicked() !== true) {
-      item.marker.setAnimation(google.maps.Animation.BOUNCE);
-      item.showing(true);
+      if (item.clicked() !== true) {
+        item.marker.setAnimation(google.maps.Animation.BOUNCE);
+        item.showing(true);
+      }
     }
     return true;
+
   };
 
-  // Toggles off the marker animation and display of secondary
-  // information for each Yelp result upon mouseover
+  /** Toggles off the marker animation and display of secondary
+   * information for each Yelp result upon mouseover
+   * @method offPlace
+   * @memberof ViewModel
+   * @param {object} item - item object from Model database
+   * @param {string} event - event triggering function call
+   */
   self.offPlace = function(item, event) {
     if(event === 'offPlace') {
-    }
-    if (item.clicked() !== true) {
-      item.marker.setAnimation(null);
-      item.showing(false);
+      if (item.clicked() !== true) {
+        item.marker.setAnimation(null);
+        item.showing(false);
+      }
     }
     return true;
   };
 
+  /** Animation callback for the secondary information display
+   * @method showResult
+   * @memberof ViewModel
+   * @param {string} elem - DOM element to use as jQuery selector
+   */
+  self.showResult = function(elem) {
+    if (elem.nodeType === 1) {
+      $(elem).hide().slideDown();
+    }
+  };
 
-  // Animation callback for the secondary information display
-    self.showResult = function(elem) {
-      if (elem.nodeType === 1) {
-        $(elem).hide().slideDown();
-      }
-    };
-
-    // Animation callback for the secondary information display
-    self.hideResult = function(elem) {
-      if (elem.nodeType === 1) {
-        $(elem).slideUp(function() {
-          (elem).remove();
-        });
-      }
-    };
+  /** Animation callback for the secondary information display
+   * @method hideResult
+   * @memberof ViewModel
+   * @param {string} elem - DOM element to use as jQuery selector
+   */
+  self.hideResult = function(elem) {
+    if (elem.nodeType === 1) {
+      $(elem).slideUp(function() {
+        (elem).remove();
+      });
+    }
+  };
 
   // Tries to initalize a google event and throws an error if
   // google is unreachable
@@ -591,24 +738,25 @@ var ViewModel = function () {
   }
 };
 
-// custom Knockout binding makes elements shown/hidden via jQuery's
-// fadeIn()/fadeOut() methods
+/** custom Knockout binding makes elements shown/hidden via jQuery's
+ * fadeIn()/fadeOut() methods
+ * @namespace ko.bindingHandler.fadeVisible
+ * @method fadeVisible
+ */
 ko.bindingHandlers.fadeVisible = {
     init: function(element, valueAccessor) {
         // Initially set the element to be instantly visible/hidden
         // depending on the value
         var value = valueAccessor();
-        $(element).toggle(ko.unwrap(value)); // Use "unwrapObservable" so we can handle values that may or may not be observable
+        // Use "unwrapObservable" to handle values that may or may not be observable
+        $(element).toggle(ko.unwrap(value));
     },
     update: function(element, valueAccessor) {
-        // Whenever the value changes, fade the element in or out
         var value = valueAccessor();
+        // Whenever the value changes, fade the element in or out
         $(element)[ko.unwrap(value) ? 'fadeIn' : 'fadeOut']();
-        // ko.unwrap(value) ? $(element).fadeIn() : $(element).fadeOut();
-        // Whenever the value changes, add/remove class to parent
-        // element
+        // Whenever the value changes, add/remove class in parent element
         $(element).closest('.result')[ko.unwrap(value) ? 'addClass' : 'removeClass']('selected');
-        //ko.unwrap(value) ? $(element).parent().parent().parent().addClass('selected') : $(element).parent().parent().parent().removeClass('selected');
     }
 };
 

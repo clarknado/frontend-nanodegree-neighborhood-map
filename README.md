@@ -6,13 +6,16 @@ Neighborhood Map is a Udacity Frontend Nanodegree project teaching the basics of
 
 ## Install
 
-For the laatest version, clone this [repository](https://github.com/tswei/neighborhood-map.git)
+For the latest version, clone this [repository](https://github.com/tswei/neighborhood-map.git)
 
 To install dependencies, [Node.js](https://docs.npmjs.com/getting-started/installing-node), [Bower](http://bower.io/#install-bower), and [Python](https://www.python.org/downloads/) are required. Instructions on installing these can be found by following the links. Thy should all be installed globally.
 
 To install the dependencies, run:
+
 `pip install -t lib -r requirements.txt`
+
 `npm install bower`
+
 `bower install`
 
 A template configuration file is supplied. This must be modified to include credentials obtained from the following APIs: [Yelp](https://www.yelp.com/developers/documentation/v2/search_api). The configuration file must be renamed to config.json to properly work with app.py.
@@ -25,13 +28,13 @@ After following the instructions for installation, a development server can be i
 
 The server's default port is 8080
 
-A live view of this project is avaialble [here](http://alert-flames-849.appspot.com)
+A live view of this project is available [here](http://alert-flames-849.appspot.com)
 
 ## Documentation
 
+Documentation for this project is in the works!
 
-
-## Development contact
+## Contribute
 
 Currently this a project not for development. However, if there are bugs, feature requests, or other development interests, please see the 'Contact Us' section for information.
 

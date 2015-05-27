@@ -11,7 +11,8 @@ module.exports = function(grunt) {
   // Configurable paths for the application
   var appConfig = {
     app: require('./bower.json').appPath || 'assets',
-    dist: 'build'
+    dist: 'build',
+    docs: 'doc'
   };
 
   // Define the configuration for all the tasks
@@ -134,7 +135,9 @@ module.exports = function(grunt) {
           src: [
             '.tmp',
             '<%= config.dist %>/{,*/}*',
-            '!<%= config.dist %>/.git{,*/}*'
+            '!<%= config.dist %>/.git{,*/}*',
+            '<%= config.docs %>/**/*',
+            '!<%= config.docs%>/.git{,*/}*'
           ]
         }]
       },
@@ -235,32 +238,6 @@ module.exports = function(grunt) {
       }
     },
 
-    // The following *-min tasks will produce minified files in the dist folder
-    // By default, your `index.html`'s <!-- Usemin block --> will take care of
-    // minification. These next options are pre-configured if you do not wish
-    // to use the Usemin blocks.
-    // cssmin: {
-    //   dist: {
-    //     files: {
-    //       '<%= yeoman.dist %>/styles/main.css': [
-    //         '.tmp/styles/{,*/}*.css'
-    //       ]
-    //     }
-    //   }
-    // },
-    // uglify: {
-    //   dist: {
-    //     files: {
-    //       '<%= yeoman.dist %>/scripts/scripts.js': [
-    //         '<%= yeoman.dist %>/scripts/scripts.js'
-    //       ]
-    //     }
-    //   }
-    // },
-    // concat: {
-    //   dist: {}
-    // },
-
     imagemin: {
       dist: {
         files: [{
@@ -297,19 +274,6 @@ module.exports = function(grunt) {
           cwd: '<%= config.dist %>',
           src: ['*.html', 'views/{,*/}*.html'],
           dest: '<%= config.dist %>'
-        }]
-      }
-    },
-
-    // ng-annotate tries to make the code safe for minification automatically
-    // by using the Angular long form for dependency injection.
-    ngAnnotate: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '.tmp/concat/scripts',
-          src: '*.js',
-          dest: '.tmp/concat/scripts'
         }]
       }
     },
@@ -381,6 +345,18 @@ module.exports = function(grunt) {
         configFile: 'test/karma.conf.js',
         singleRun: true
       }
+    },
+
+    // Build Documentation from Script comments
+    jsdoc: {
+      dist: {
+        src: ['<%= config.app %>/scripts/{,*/}*.js', 'README.md'],
+        options: {
+          destination: '<%= config.docs %>',
+          template: 'node_modules/grunt-jsdoc/node_modules/ink-docstrap/template',
+          configure: 'node_modules/grunt-jsdoc/node_modules/ink-docstrap/template/jsdoc.conf.json'
+        }
+      }
     }
   });
 
@@ -410,6 +386,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('build', [
     'clean:dist',
+    'jsdoc',
     'wiredep',
     'useminPrepare',
     'concurrent:dist',
