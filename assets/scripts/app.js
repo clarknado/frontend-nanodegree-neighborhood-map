@@ -27,7 +27,7 @@ var PlacesList = function() {
   // Lists of search results and selections for dispaly on View
   // self.results = ko.computed();
   self.yelpResults = ko.observableArray();
-  self.googleResults = ko.observableArray();
+  self.googleResults = ko.observableArray().extend({ rateLimit: 250 });
 
   // Parameters to be used in Yelp queries
   self.parameters = ko.observable();
@@ -35,17 +35,20 @@ var PlacesList = function() {
   // Item skeleton to be used in response parsing to update values // from search results
   self.Item = function() {
     this.marker = '';
-    this.title = ko.observable('');
-    this.rating = ko.observable('');
-    this.reviewCount = ko.observable('');
-    this.url = ko.observable('');
-    this.urlTitle = ko.observable('');
+    this.infoWindow = '';
+    this.infoContent = ko.observable('');
+    this.title = ko.observable();
+    this.rating = ko.observable();
+    this.reviewCount = ko.observable();
+    this.url = ko.observable();
+    this.urlTitle = ko.observable();
     this.location = '';
-    this.photo = ko.observable('');
-    this.alt = ko.observable('');
+    this.photo = ko.observable();
+    this.alt = ko.observable();
     this.showing = ko.observable(false);
     this.clicked = ko.observable(false);
     this.searched = ko.observable(false);
+    this.key = ko.observable();
   };
 
   self.update = function(bounds) {
@@ -111,16 +114,17 @@ var ViewModel = function () {
     self.input = $('.pac-input')[0];
 
     // Initialize values for list tracking and view display
-    self.keys = ko.observableArray();
+    self.currentInfoWindow = new google.maps.InfoWindow({});
+    self.keys = ko.observableArray().extend({ rateLimit: 250 });
     self.list = ko.observableArray([]);
-    self.currentList = [];
+    self.currentList = ko.observable();
     self.preText = ko.observable('Previous');
     self.nexText = ko.observable('Next');
     self.populated = ko.observable(false);
     self.resultsView = ko.computed(function() {
       if(self.populated()) {
-        var x = self.currentList[0];
-        var y = self.currentList[1];
+        var x = self.currentList()[0];
+        var y = self.currentList()[1];
         var temp = [];
         var key, item;
         for (x; x<y; x++) {
@@ -134,6 +138,8 @@ var ViewModel = function () {
           temp.push(item);
         }
         return temp;
+      } else {
+        return [];
       }
     });
 
@@ -201,7 +207,6 @@ var ViewModel = function () {
   // Runs query results functions with new places search
   self.query = function(places) {
     if (places !== undefined) {
-      // self.removeMarkers();
       self.googleResponseParse(places);
     }
   };
@@ -266,6 +271,8 @@ var ViewModel = function () {
           position : location,
           title : title
         });
+      item.infoContent(title);
+      item.infoWindow = new google.maps.InfoWindow({});
       item.title(title);
       item.rating('Google Rating: ' + result.rating);
       item.urlTitle(title);
@@ -273,8 +280,15 @@ var ViewModel = function () {
       item.photo(photo);
       item.alt('Picture of ' + title);
 
+      self.addMouseOver(item);
+      self.addInfo(item);
+      self.wikiRequest(item);
+
+      item.infoWindow.setContent(item.infoCalculated());
+
       // Create unique key from name and geolocation
       var key = title + location.toString();
+      item.key = key;
 
       // Create temp associatve array to store values
       temp[key] = item;
@@ -283,17 +297,15 @@ var ViewModel = function () {
       iter.push(key);
       }
 
-
     // Filter results to 'update' results rather than replace
-    self.resultsFilter(self.placesList.googleResults, temp);
-    self.keys(iter);
+    self.resultsFilter(self.placesList.googleResults, temp, self.keys);
 
     // Set index of current listing in view
     len = self.keys().length;
     if (5 <= len) {
-      self.currentList = [0,5];
+      self.currentList([0,5]);
     } else {
-      self.currentList = [0, len];
+      self.currentList([0, len]);
     }
 
     // Update list displayed in the View
@@ -304,10 +316,10 @@ var ViewModel = function () {
   // Updates the View with the next 5 results only if there are
   // more results
   self.nextList = function() {
-    var first = self.currentList[1];
+    var first = self.currentList()[1];
     var last = first + 5;
     if (last <= self.keys().length) {
-      self.currentList = [first, last];
+      self.currentList([first, last]);
     }
     // self.updateList();
   };
@@ -315,11 +327,11 @@ var ViewModel = function () {
   // Updates the View with the previous 5 results only if there
   // are previous results
   self.prevList = function() {
-    var last = self.currentList[0];
+    var last = self.currentList()[0];
     var first;
     if (last !== 0) {
       first = last - 5;
-      self.currentList = [first, last];
+      self.currentList([first, last]);
     }
     // self.updateList();
   };
@@ -334,6 +346,60 @@ var ViewModel = function () {
     self.ajax(obj, self.yelpResponseParse);
   };
 
+  self.addMouseOver = function(item) {
+    var marker = item.marker;
+    var infowindow = item.infoWindow;
+    google.maps.event.addListener(marker, 'mouseover', function() {
+      self.currentInfoWindow.close();
+      infowindow.open(self.map, marker);
+      self.currentInfoWindow = infowindow;
+    });
+  };
+
+  self.wikiRequest = function(item) {
+    // Set Wikipedia AJAX request here
+    var fail = 'failed to get wikipedia resources';
+    var wikiRequestTimeout = setTimeout(function(){
+      self.updateInfo(item, fail);
+    }, 8000);
+
+    var wikiAPIurl = 'http://en.wikipedia.org/w/api.php?format=json&action=query&list=search&srsearch=' + item.title().split(' ').join('+');
+    $.ajax({
+      url: wikiAPIurl,
+      dataType: 'jsonp',
+      success: function (data) {
+        var temp = ['<ul>'];
+        $.each(data.query.search, function (index, article) {
+          if(index < 3) {
+            temp.push('<li class=article><a href="http://en.wikipedia.org/wiki/'+ article.title + '">' +
+                article.title + '</a></li>');
+          }
+        });
+        temp.push('</ul>');
+        clearTimeout(wikiRequestTimeout);
+        var wikiTitle = 'Wikipedia Results for ' + item.title();
+        var content = '<div>' + wikiTitle + temp.join('') + '</div>';
+        self.updateInfo(item, content);
+        },
+      error: function(jqXHR, textStatus, errorThrown) {
+        self.updateInfo(item, fail);
+        self.errorReturn(jqXHR, textStatus, errorThrown);
+      }
+    });
+  };
+
+  self.updateInfo = function(item, content) {
+    item.infoContent(content);
+    item.infoWindow.setContent(item.infoCalculated());
+    console.log(item.infoWindow.getContent());
+  };
+
+  self.addInfo = function(item) {
+    item.infoCalculated = ko.computed(function() {
+      return '<div class="info-window">'+ item.infoContent() + '</div>';
+    });
+  };
+
   // Returns url for AJAX request
   self.urlGen = function() {
     return self.placesList.url;
@@ -346,13 +412,15 @@ var ViewModel = function () {
 
   // Filters results to only 'update' the result list rather than
   // completely replace with new results
-  self.resultsFilter = function(obsList, newList) {
+  self.resultsFilter = function(obsList, newList, keys) {
     var oldList = obsList();
+    var temp = [];
+    var key;
 
     // Checks if oldList key is in newList and removes it from
     // the map if it is not, or deletes it from the newList if
     // it is found
-    for (var key in oldList) {
+    for (key in oldList) {
       if (oldList.hasOwnProperty(key) &&
         !newList.hasOwnProperty(key)) {
         oldList[key].marker.setMap(null);
@@ -372,7 +440,14 @@ var ViewModel = function () {
       }
     }
 
+    for (key in oldList) {
+      if (oldList.hasOwnProperty(key)) {
+        temp.push(key);
+      }
+    }
+
     obsList(oldList);
+    keys(temp);
   };
 
   // Handles errors to display appropriate responses to client
@@ -391,7 +466,7 @@ var ViewModel = function () {
     }
     // Modifies url label to display error if Yelp AJAX
     // request to proxy fails
-    if (error2 !== undefined){
+    if (error2 !== undefined && obj !== undefined){
       var item = self.placesList.googleResults()[obj.key];
       item.urlTitle = 'No Yelp Results';
       self.updateList();
@@ -433,6 +508,7 @@ var ViewModel = function () {
       // corresponds to a successful match
       if (results.length === 1) {
         item.url(result.url);
+        item.urlTitle(result.name);
         item.rating('Yelp Rating: ' + result.rating);
         item.reviewCount('Number of Reviews: ' + result.reviewCount);
       } else {
@@ -448,7 +524,8 @@ var ViewModel = function () {
   // Toggles marker animation and display of secondary information // for each Yelp result upon click
   self.togglePlace = function(item, event) {
     var marker = item.marker;
-    console.log(event, 'togglePlace');
+    if(event === 'togglePlace') {
+    }
 
     // Extra toggle of clicked property allows mouseover events
     // to have the same animations
@@ -467,7 +544,8 @@ var ViewModel = function () {
   // Toggles on the marker animation and display of secondary
   // information for each Yelp result upon mouseover
   self.onPlace = function(item, event) {
-    console.log(event, 'onPlace');
+    if(event === 'onPlace') {
+    }
     if (item.clicked() !== true) {
       item.marker.setAnimation(google.maps.Animation.BOUNCE);
       item.showing(true);
@@ -478,7 +556,8 @@ var ViewModel = function () {
   // Toggles off the marker animation and display of secondary
   // information for each Yelp result upon mouseover
   self.offPlace = function(item, event) {
-    console.log(event, 'offPlace');
+    if(event === 'offPlace') {
+    }
     if (item.clicked() !== true) {
       item.marker.setAnimation(null);
       item.showing(false);

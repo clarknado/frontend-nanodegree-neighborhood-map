@@ -1,5 +1,4 @@
-# application: alert-flames-849
-application: build
+application: alert-flames-849
 version: 1
 runtime: python27
 api_version: 1
@@ -8,12 +7,23 @@ threadsafe: yes
 skip_files:
 - ^node_modules$
 - ^\.git$
-- ^lib$
 - ^spec$
 - ^assets$
 - ^test$
 - ^bower_components$
 - ^\.tmp$
+- ^Gruntfile\.js$
+- ^\.editorconfig$
+- ^package\.json$
+- ^\.gitignore$
+- ^config-template\.json$
+- ^bower\.json$
+- ^README\.md$
+- ^\.jshintrc$
+- ^SOURCES\.md$
+- ^requirements\.txt$
+- ^.*\.pyc$
+- ^.*\.egg-info$
 
 default_expiration: "0d 0h 5m"
 
@@ -23,20 +33,24 @@ handlers:
   upload: favicon\.ico
 
 - url: /images
+  application_readable: true
   static_dir: build/images
 
+- url: /fonts
+  application_readable: true
+  static_dir: build/fonts
+
 - url: /scripts
+  application_readable: true
   static_dir: build/scripts
 
 - url: /styles
+  application_readable: true
   static_dir: build/styles
 
 - url: /views
+  application_readable: true
   static_dir: build/views
-
-- url: /index\.html
-  static_files: build/index.html
-  upload: build/index\.html
 
 - url: .*
   script: main.app

@@ -29,8 +29,8 @@ vendor.add('lib')
 
 import oauth2
 
-template_dir = os.path.dirname(__file__) + '\\build'
-logging.exception(template_dir);
+
+template_dir = os.path.dirname(__file__) + '/build'
 jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
                 autoescape = True)
 
