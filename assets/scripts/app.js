@@ -161,7 +161,7 @@ var ViewModel = function () {
         for (x; x<y; x++) {
           key = self.keys()[x];
           item = self.placesList.placeResults()[key];
-          if (!item.searched()) {
+          if (!item.searched() && Offline.state === 'up') {
             item.searched(true);
             // Sets current state of object for AJAX search
             self.setState(key);
@@ -232,6 +232,14 @@ var ViewModel = function () {
       self.searchBox.setBounds(map.getBounds());
     });
 
+    // Sets offline/online alerts for user
+    Offline.check();
+    Offline.on('up', function() {
+        alert('Internet is reconnected');
+    });
+    Offline.on('down', function() {
+      alert('Internet is disconnected');
+    });
   };
 
   /** Runs query results functions with new places search.
@@ -753,6 +761,7 @@ var ViewModel = function () {
   } catch (e) {
     self.errorReturn(e);
   }
+
 };
 
 /** custom Knockout binding makes elements shown/hidden via jQuery's
