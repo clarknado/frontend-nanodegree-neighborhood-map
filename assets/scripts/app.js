@@ -415,19 +415,26 @@ var ViewModel = function () {
   /** Opens Info Window attached to marker when mouseover event
    * occurs on the marker item and changes the Icon. It also reverts
    * the previous item's icon and closes its info window.
+   * It will also toggle same properties with @togglePlace when
+   * clicked.
    * @method addMouseOver
    * @memberof ViewModel
    * @param {object} item - item object from Model database
    */
   self.addMouseOver = function(item) {
+    var marker = item.marker;
     // Reverts previous item's marker state and modifies new item's marker
     // and updates the 'current item'
-    google.maps.event.addListener(item.marker, 'mouseover', function() {
+    google.maps.event.addListener(marker, 'mouseover', function() {
       self.currentItem.infoWindow.close();
       self.currentItem.marker.setIcon(self.currentItem.markerImg);
-      item.infoWindow.open(self.map, item.marker);
+      item.infoWindow.open(self.map, marker);
       item.marker.setIcon(null);
       self.currentItem = item;
+    });
+
+    google.maps.event.addListener(marker, 'click', function() {
+      self.togglePlace(self.currentItem);
     });
   };
 
@@ -654,22 +661,20 @@ var ViewModel = function () {
    * @method togglePlace
    * @memberof ViewModel
    * @param {object} item - item object from Model database
-   * @param {string} event - event triggering function call
    */
-  self.togglePlace = function(item, event) {
+  self.togglePlace = function(item) {
     var marker = item.marker;
-    if(event) {
-      // Extra toggle of clicked property allows mouseover events
-      // to have the same animations
-      if (item.clicked() === true) {
-        marker.setAnimation(null);
-        item.showing(false);
-        item.clicked(false);
-      } else {
-          marker.setAnimation(google.maps.Animation.BOUNCE);
-          item.showing(true);
-          item.clicked(true);
-      }
+
+    // Extra toggle of clicked property allows mouseover events
+    // to have the same animations
+    if (item.clicked() === true) {
+      marker.setAnimation(null);
+      item.showing(false);
+      item.clicked(false);
+    } else {
+        marker.setAnimation(google.maps.Animation.BOUNCE);
+        item.showing(true);
+        item.clicked(true);
     }
     return true;
   };
@@ -693,14 +698,11 @@ var ViewModel = function () {
    * @method onPlace
    * @memberof ViewModel
    * @param {object} item - item object from Model database
-   * @param {string} event - event triggering function call
    */
-  self.onPlace = function(item, event) {
-    if(event) {
-      if (item.clicked() !== true) {
-        item.marker.setAnimation(google.maps.Animation.BOUNCE);
-        item.showing(true);
-      }
+  self.onPlace = function(item) {
+    if (item.clicked() !== true) {
+      item.marker.setAnimation(google.maps.Animation.BOUNCE);
+      item.showing(true);
     }
     return true;
 
@@ -711,14 +713,11 @@ var ViewModel = function () {
    * @method offPlace
    * @memberof ViewModel
    * @param {object} item - item object from Model database
-   * @param {string} event - event triggering function call
    */
-  self.offPlace = function(item, event) {
-    if(event) {
-      if (item.clicked() !== true) {
-        item.marker.setAnimation(null);
-        item.showing(false);
-      }
+  self.offPlace = function(item) {
+    if (item.clicked() !== true) {
+      item.marker.setAnimation(null);
+      item.showing(false);
     }
     return true;
   };

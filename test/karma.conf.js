@@ -25,6 +25,7 @@ module.exports = function(config) {
       'bower_components/jquery/dist/jquery.js',
       'bower_components/bootstrap/dist/js/bootstrap.js',
       'bower_components/knockout/dist/knockout.js',
+      'bower_components/offline/offline.min.js',
       // endbower
       "assets/scripts/**/*.js",
       "test/spec/**/*.js"
