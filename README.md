@@ -34,6 +34,10 @@ A live view of this project is available [here](http://alert-flames-849.appspot.
 
 Documentation for this project is in the works!
 
+Currently Documentation is auto-generated from the comments in javascript files. After cloning the repository, run the default grunt task in the command line. The documentation can then be viewed in your browser at the url:
+
+file://C:/PATH/ROOT/doc/index.html
+
 ## Contribute
 
 Currently this a project not for development. However, if there are bugs, feature requests, or other development interests, please see the 'Contact Us' section for information.

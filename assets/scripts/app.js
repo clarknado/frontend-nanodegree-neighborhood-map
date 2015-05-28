@@ -58,7 +58,7 @@ var PlacesList = function() {
     this.clicked = ko.observable(false);
     this.searched = ko.observable(false);
     this.key = ko.observable();
-    this.markerImg = {};
+    this.markerImg = null;
   };
 
   /** Parses response elements from Google to update search
@@ -143,6 +143,8 @@ var ViewModel = function () {
     self.input = $('.pac-input')[0];
 
     // Initialize values for list tracking and view display
+    self.showText = ko.observable('Hide Results');
+    self.resultsVisible = ko.observable(true);
     self.currentItem = new self.placesList.Item();
     self.keys = ko.observableArray().extend({ rateLimit: 250 });
     self.list = ko.observableArray([]);
@@ -310,8 +312,10 @@ var ViewModel = function () {
       var item = new self.placesList.Item();
 
       // Set item's properties
+      item.marker = new google.maps.Marker({});
       item.marker.setPosition(location);
       item.marker.setTitle(title);
+      item.infoWindow = new google.maps.InfoWindow({});
       item.title(title);
       item.rating('Google Rating: ' + result.rating);
       item.urlTitle(title);
@@ -421,7 +425,7 @@ var ViewModel = function () {
     google.maps.event.addListener(item.marker, 'mouseover', function() {
       self.currentItem.infoWindow.close();
       self.currentItem.marker.setIcon(self.currentItem.markerImg);
-      item.infowindow.open(self.map, item.marker);
+      item.infoWindow.open(self.map, item.marker);
       item.marker.setIcon(null);
       self.currentItem = item;
     });
@@ -654,7 +658,7 @@ var ViewModel = function () {
    */
   self.togglePlace = function(item, event) {
     var marker = item.marker;
-    if(event === 'togglePlace') {
+    if(event) {
       // Extra toggle of clicked property allows mouseover events
       // to have the same animations
       if (item.clicked() === true) {
@@ -670,6 +674,20 @@ var ViewModel = function () {
     return true;
   };
 
+  /** Toggles display of Results DOM upon click
+   * @method toggleResultsVisible
+   * @memberof ViewModel
+   */
+  self.toggleResultsVisible = function() {
+    if (self.resultsVisible()) {
+      self.showText('Show Results');
+    } else {
+      self.showText('Hide Results');
+    }
+    self.resultsVisible(!self.resultsVisible());
+    return true;
+  };
+
   /** Toggles on the marker animation and display of secondary
    * information for each Yelp result upon mouseover
    * @method onPlace
@@ -678,7 +696,7 @@ var ViewModel = function () {
    * @param {string} event - event triggering function call
    */
   self.onPlace = function(item, event) {
-    if(event === 'onPlace') {
+    if(event) {
       if (item.clicked() !== true) {
         item.marker.setAnimation(google.maps.Animation.BOUNCE);
         item.showing(true);
@@ -696,7 +714,7 @@ var ViewModel = function () {
    * @param {string} event - event triggering function call
    */
   self.offPlace = function(item, event) {
-    if(event === 'offPlace') {
+    if(event) {
       if (item.clicked() !== true) {
         item.marker.setAnimation(null);
         item.showing(false);

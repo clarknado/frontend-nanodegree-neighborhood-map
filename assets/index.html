@@ -26,7 +26,7 @@
     <!-- Add your site or application content here -->
     <div class="text-center pac-container">
       <input type="text" class="controls pac-input" data-bind="textInput: search" autofocus>
-      <div class="results">
+      <div class="results" data-bind="visible: resultsVisible">
         <div data-bind="template: { foreach: resultsView,
                       beforeRemove: hideResult,
                       afterAdd: showResult }">
@@ -46,11 +46,12 @@
 
           </div>
         </div>
-        <div class="result" data-bind="fadeVisible: populated">
+        <div class="result" data-bind="visible: populated">
           <div class="col-50" data-bind="text: preText, click: prevList"></div>
           <div class="col-50" data-bind="text: nexText, click: nextList"></div>
         </div>
       </div>
+      <div class="result" data-bind="visible: populated, text: showText, click: toggleResultsVisible"></div>
 
     </div>
     <div class="map-canvas"></div>
