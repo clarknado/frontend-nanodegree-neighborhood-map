@@ -6,7 +6,7 @@ Neighborhood Map is a Udacity Frontend Nanodegree project teaching the basics of
 
 ## Install
 
-For the latest version, clone this [repository](https://github.com/tswei/neighborhood-map.git)
+For the latest version, clone this [repository](https://github.com/tswei/frontend-nanodegree-neighborhood-map.git)
 
 To install dependencies, [Node.js](https://docs.npmjs.com/getting-started/installing-node), [Bower](http://bower.io/#install-bower), and [Python](https://www.python.org/downloads/) are required. Instructions on installing these can be found by following the links. Thy should all be installed globally.
 
@@ -14,7 +14,7 @@ To install the dependencies, run:
 
 `pip install -t lib -r requirements.txt`
 
-`npm install bower`
+`npm install`
 
 `bower install`
 
