@@ -25,6 +25,10 @@ body > .prev-contain {
     visibility: visible;
 }
 
+.pac-input, .prev-contain {
+    transition: margin 1s, padding 1s, top 1s, left 1s;
+}
+
 .prev-contain, .pac-input {
     font-family: Roboto;
     font-weight: 300;
@@ -112,9 +116,16 @@ body {
     overflow: auto;
 }
 
-@media only screen and (max-width:480px) {
+@media only screen and (max-width:444px) {
     body {font-size: 12px;}
     header p {padding-left: 4.5em;}
-    .prev-contain {width: 80%;}
-    .pac-input {width: 75%;}
+    .prev-contain {
+        width: 100%;
+        max-width: 400px;
+        padding: 5px;
+        margin: 0;
+        top: 0;
+        left: 0;
+    }
+    .pac-input {margin: 0; max-width: 376px;}
 }
