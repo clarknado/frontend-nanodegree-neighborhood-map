@@ -127,7 +127,7 @@ var ViewModel = function () {
    */
   self.init = function(element) {
     // Initial location for google map
-    self.location = ko.observable('San Francisco, CA');
+    self.location = ko.observable('');
 
     // Deprecated values
     self.searchField = ko.observable('location');
@@ -279,9 +279,17 @@ var ViewModel = function () {
    * @memberof ViewModel
    */
   self.googleCode = function() {
+    var location;
+
+    if (self.location() === '') {
+      location = 'San Francisco, CA';
+    } else {
+      location = self.location();
+    }
+
     // Queries google database with a string address to return a
     // LatLng object
-    self.geocoder.geocode({ 'address': self.location() }, function(results, status) {
+    self.geocoder.geocode({ 'address': location }, function(results, status) {
       // Successful geocoding updates map location
       // Errors are sent to error handling function
         if (status === google.maps.GeocoderStatus.OK) {
