@@ -184,7 +184,7 @@ var ViewModel = function () {
     self.map = new google.maps.Map(element);
 
     // Attaches DOM element to map
-    self.map.controls[google.maps.ControlPosition.TOP_LEFT].push(self.container);
+    // self.map.controls[google.maps.ControlPosition.TOP_LEFT].push(self.container);
 
     // Creates a google search box to implement place searches
     // and Autocomplete features
@@ -240,6 +240,27 @@ var ViewModel = function () {
     Offline.on('down', function() {
       alert('Internet is disconnected');
     });
+
+    window.onload = function() {
+      var target = $('.pac-container'),
+            copy = $('.autocomplete');
+      copy.css({height: target.height(), display: target.css('display')});
+
+      var callback = function(target, copy) {
+        if (target.css('display') === 'none') {
+          copy.slideUp();
+        } else {
+          copy.slideDown();
+        }
+      };
+
+      var element = target[0], bubbles = false;
+      MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+      var observer = new MutationObserver(function() {
+        callback(target, copy);
+      });
+      observer.observe(element, { attributes: true, subtree: bubbles, attributeFilter: ['style'] });
+    };
   };
 
   /** Runs query results functions with new places search.

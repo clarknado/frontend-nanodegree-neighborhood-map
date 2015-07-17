@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Neighborhood Map">
     <meta name="author" content="Turner Smith">
     <title>Neighborhood Map</title>
@@ -23,8 +23,9 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <div class="text-center pac-container">
+    <div class="text-center prev-contain">
       <input type="text" class="controls pac-input" data-bind="textInput: search" autofocus>
+      <div class="autocomplete"></div>
       <div class="results" data-bind="visible: resultsVisible">
         <div data-bind="template: { foreach: resultsView,
                       beforeRemove: hideResult,
