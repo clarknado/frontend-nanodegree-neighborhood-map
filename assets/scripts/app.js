@@ -139,12 +139,11 @@ var ViewModel = function () {
 
     // Grab DOM elements to attach to map and initialize google
     // search box
-    self.container = $('.pac-container')[0];
     self.input = $('.pac-input')[0];
 
     // Initialize values for list tracking and view display
     self.showText = ko.observable('Hide Results');
-    self.resultsVisible = ko.observable(true);
+    self.resultsVisible = ko.observable(false);
     self.currentItem = new self.placesList.Item();
     self.keys = ko.observableArray().extend({ rateLimit: 250 });
     self.list = ko.observableArray([]);
@@ -173,7 +172,20 @@ var ViewModel = function () {
         return [];
       }
     });
-
+    self.topLimit = ko.computed(function() {
+      if (self.populated()) {
+        return self.currentList()[1];
+      } else {
+        return '';
+      }
+    });
+    self.botLimit = ko.computed(function() {
+      if (self.populated()) {
+        return self.currentList()[0] + 1;
+      } else {
+        return '';
+      }
+    });
 
     // Sets default element if no element is passed into function
     if (!element) {
@@ -250,6 +262,7 @@ var ViewModel = function () {
         if (target.css('display') === 'none') {
           copy.slideUp();
         } else {
+          copy.css({height: target.height()});
           copy.slideDown();
         }
       };
@@ -405,6 +418,7 @@ var ViewModel = function () {
     }
 
     // Update list displayed in the View
+    self.resultsVisible(true);
     self.populated(true);
     };
 

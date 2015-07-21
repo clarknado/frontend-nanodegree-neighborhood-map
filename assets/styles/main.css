@@ -21,7 +21,7 @@ body > .prev-contain {
     visibility: visible;
 }
 
-.result {
+.info-grp {
     visibility: visible;
 }
 
@@ -116,6 +116,26 @@ body {
     overflow: auto;
 }
 
+.rvs-btn:after {
+    font-weight: 700;
+    content: '\003008';
+}
+
+.fwd-btn:after {
+    font-weight: 700;
+    content: '\003009';
+}
+
+.rvs-btn:hover:after, .fwd-btn:hover:after {
+    color: #d4d4d4;
+}
+
+.page-results {
+    text-align: right;
+    font-size: 12px;
+    font-weight: 400;
+}
+
 @media only screen and (max-width:444px) {
     body {font-size: 12px;}
     header p {padding-left: 4.5em;}
@@ -128,4 +148,5 @@ body {
         left: 0;
     }
     .pac-input {margin: 0; max-width: 376px;}
+    .info-grp {margin: auto; max-width: 376px;}
 }

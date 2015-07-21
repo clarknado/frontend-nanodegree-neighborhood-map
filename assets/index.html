@@ -23,35 +23,43 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <div class="text-center prev-contain">
+    <div class="prev-contain text-center">
       <input type="text" class="controls pac-input" data-bind="textInput: search" autofocus>
       <div class="autocomplete"></div>
-      <div class="results" data-bind="visible: resultsVisible">
-        <div data-bind="template: { foreach: resultsView,
-                      beforeRemove: hideResult,
-                      afterAdd: showResult }">
-          <div class="result" data-bind="click: $parent.togglePlace, event: {mouseover: $parent.onPlace, mouseleave: $parent.offPlace}">
-            <div>
-              <div class="col-50">
-                <div class="title" data-bind="text: title"></div>
-                <div class="secondary-info" data-bind="fadeVisible: showing">
-                  <div data-bind="text: rating"></div>
-                  <a data-bind="visible: url, text: urlTitle, attr: { href: url, title: urlTitle }"></a>
+      <div class="info-grp" data-bind="visible: resultsVisible">
+        <div class="results">
+          <div data-bind="template: { foreach: resultsView,
+                        beforeRemove: hideResult,
+                        afterAdd: showResult }">
+            <div class="result" data-bind="click: $parent.togglePlace, event: {mouseover: $parent.onPlace, mouseleave: $parent.offPlace}">
+              <div>
+                <div class="col-50">
+                  <div class="title" data-bind="text: title"></div>
+                  <div class="secondary-info" data-bind="fadeVisible: showing">
+                    <div data-bind="text: rating"></div>
+                    <a data-bind="visible: url, text: urlTitle, attr: { href: url, title: urlTitle }"></a>
+                  </div>
+                </div>
+                <div class="col-50">
+                  <img class="img-responsive" data-bind="attr: { src: photo, alt: alt }" alt="">
                 </div>
               </div>
-              <div class="col-50">
-                <img class="img-responsive" data-bind="attr: { src: photo, alt: alt }" alt="">
-              </div>
-            </div>
 
+            </div>
+          </div>
+          <div class="result" data-bind="visible: populated">
+            <div class="page-results">
+              <span>Showing Results</span>
+              <span data-bind="text: botLimit"></span>
+              <span>-</span>
+              <span data-bind="text: topLimit"></span>
+              <span class="rvs-btn" data-bind="click: prevList"></span>
+              <span class="fwd-btn" data-bind="click: nextList"></span>
+            </div>
           </div>
         </div>
-        <div class="result" data-bind="visible: populated">
-          <div class="col-50" data-bind="text: preText, click: prevList"></div>
-          <div class="col-50" data-bind="text: nexText, click: nextList"></div>
-        </div>
+        <div class="result" data-bind="visible: populated, text: showText, click: toggleResultsVisible"></div>
       </div>
-      <div class="result" data-bind="visible: populated, text: showText, click: toggleResultsVisible"></div>
 
     </div>
     <div class="map-canvas"></div>
