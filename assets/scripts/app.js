@@ -142,14 +142,15 @@ var ViewModel = function () {
     self.input = $('.pac-input')[0];
 
     // Initialize values for list tracking and view display
-    self.showText = ko.observable('Hide Results');
+    self.selected = ko.observable();
+    // self.showText = ko.observable('Hide Results');
     self.resultsVisible = ko.observable(false);
+    // self.displayItem = ko.observable();
     self.currentItem = new self.placesList.Item();
     self.keys = ko.observableArray().extend({ rateLimit: 250 });
     self.list = ko.observableArray([]);
     self.currentList = ko.observable();
-    self.preText = ko.observable('Previous');
-    self.nexText = ko.observable('Next');
+    // self.searchInfo = ko.observable(false);
     self.populated = ko.observable(false);
     self.resultsView = ko.computed(function() {
       if(self.populated()) {
@@ -172,6 +173,7 @@ var ViewModel = function () {
         return [];
       }
     });
+
     self.topLimit = ko.computed(function() {
       if (self.populated()) {
         return self.currentList()[1];
@@ -179,6 +181,7 @@ var ViewModel = function () {
         return '';
       }
     });
+
     self.botLimit = ko.computed(function() {
       if (self.populated()) {
         return self.currentList()[0] + 1;
@@ -186,6 +189,32 @@ var ViewModel = function () {
         return '';
       }
     });
+
+    self.searchResult = ko.computed(function() {
+      if (self.populated() && !self.selected()) {
+        return !self.resultsVisible();
+      } else {
+        return false;
+      }
+    });
+
+    self.itemInfo = ko.computed(function() {
+      if (self.populated() && self.selected()) {
+        return !self.resultsVisible();
+      } else {
+        return false;
+      }
+    });
+
+    self.displayResult = ko.computed(function() {
+      if (self.populated()) {
+        return self.resultsVisible();
+      } else {
+        return false;
+      }
+    });
+
+
 
     // Sets default element if no element is passed into function
     if (!element) {
@@ -254,11 +283,17 @@ var ViewModel = function () {
     });
 
     window.onload = function() {
-      var target = $('.pac-container'),
-            copy = $('.autocomplete');
-      copy.css({height: target.height(), display: target.css('display')});
 
-      var callback = function(target, copy) {
+      // new ResizeSensor($('.prev-contain'), function() {
+      //   var target = $('.prev-contain');
+      //   var height = target.height() + 10;
+      //   var width = target.width() + 15;
+      //   $('.copy-contain').css({height: height, width: width});
+      // });
+
+      $('.prev-contain').hoverIntent(self.onResults, self.offResults);
+
+      var cb1 = function(target, copy) {
         if (target.css('display') === 'none') {
           copy.slideUp();
         } else {
@@ -267,12 +302,31 @@ var ViewModel = function () {
         }
       };
 
-      var element = target[0], bubbles = false;
-      MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
-      var observer = new MutationObserver(function() {
-        callback(target, copy);
+      var p1 = [$('.pac-container'), $('.autocomplete'), cb1];
+      var parings = [p1];
+      var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+
+      var setObserver = function(observer, element, bubbles) {
+        observer.observe(element, { attributes: true, subtree: bubbles, attributeFilter: ['style'] });
+      };
+
+      parings.forEach(function(pair) {
+        var target = pair[0],
+            copy = pair[1],
+            callback = pair[2];
+        var element = target[0],
+            bubbles = false;
+        var observer = new MutationObserver(function() {
+          callback(target, copy);
+        });
+        setObserver(observer, element, bubbles);
       });
-      observer.observe(element, { attributes: true, subtree: bubbles, attributeFilter: ['style'] });
+
+      // var observer = new MutationObserver(function() {
+      //   callback(t1, c1);
+      // });
+
+      // observer.observe(element, { attributes: true, subtree: bubbles, attributeFilter: ['style'] });
     };
   };
 
@@ -418,8 +472,11 @@ var ViewModel = function () {
     }
 
     // Update list displayed in the View
-    self.resultsVisible(true);
-    self.populated(true);
+    if (len > 0) {
+      self.resultsVisible(true);
+      self.populated(true);
+      // self.searchInfo(true);
+    }
     };
 
   /** Updates the View with the next 5 results only if there are
@@ -476,9 +533,13 @@ var ViewModel = function () {
     var marker = item.marker;
     // Reverts previous item's marker state and modifies new item's marker
     // and updates the 'current item'
-    google.maps.event.addListener(marker, 'mouseover', function() {
+    var closeCurrentItem = function() {
       self.currentItem.infoWindow.close();
       self.currentItem.marker.setIcon(self.currentItem.markerImg);
+    };
+
+    google.maps.event.addListener(marker, 'mouseover', function() {
+      closeCurrentItem();
       item.infoWindow.open(self.map, marker);
       item.marker.setIcon(null);
       self.currentItem = item;
@@ -715,17 +776,27 @@ var ViewModel = function () {
    */
   self.togglePlace = function(item) {
     var marker = item.marker;
+    var current = self.selected();
+
+    var closeCurrentItem = function(koItem) {
+      var i = koItem();
+      i.marker.setAnimation(null);
+      i.showing(false);
+      i.clicked(false);
+      koItem(null);
+    };
+
+    if (self.selected()) {
+      closeCurrentItem(self.selected);
+    }
 
     // Extra toggle of clicked property allows mouseover events
     // to have the same animations
-    if (item.clicked() === true) {
-      marker.setAnimation(null);
-      item.showing(false);
-      item.clicked(false);
-    } else {
-        marker.setAnimation(google.maps.Animation.BOUNCE);
-        item.showing(true);
-        item.clicked(true);
+    if (item.clicked() !== true && current !== item) {
+      marker.setAnimation(google.maps.Animation.BOUNCE);
+      item.showing(true);
+      item.clicked(true);
+      self.selected(item);
     }
     return true;
   };
@@ -736,11 +807,12 @@ var ViewModel = function () {
    */
   self.toggleResultsVisible = function() {
     if (self.resultsVisible()) {
-      self.showText('Show Results');
+      self.showText('Show Results for ' + self.search());
     } else {
       self.showText('Hide Results');
     }
     self.resultsVisible(!self.resultsVisible());
+    console.log(self.resultsVisible());
     return true;
   };
 
@@ -756,7 +828,6 @@ var ViewModel = function () {
       item.showing(true);
     }
     return true;
-
   };
 
   /** Toggles off the marker animation and display of secondary
@@ -771,6 +842,16 @@ var ViewModel = function () {
       item.showing(false);
     }
     return true;
+  };
+
+  self.onResults = function() {
+    if (self.populated()) {
+      self.resultsVisible(true);
+    }
+  };
+
+  self.offResults = function() {
+    self.resultsVisible(false);
   };
 
   /** Animation callback for the secondary information display
@@ -806,6 +887,7 @@ var ViewModel = function () {
   }
 
 };
+
 
 /** custom Knockout binding makes elements shown/hidden via jQuery's
  * fadeIn()/fadeOut() methods

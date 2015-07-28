@@ -7,7 +7,9 @@
     "bootstrap": "~3.3.4",
     "jquery": "~2.1.4",
     "knockout": "~3.3.0",
-    "offline": "~0.7.11"
+    "offline": "~0.7.11",
+    "css-element-queries": "~0.3.0",
+    "jquery-hoverIntent": "~1.8.1"
   },
   "homepage": "https://github.com/tswei/neighborhood-map",
   "authors": [

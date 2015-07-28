@@ -26,7 +26,7 @@
     <div class="prev-contain text-center">
       <input type="text" class="controls pac-input" data-bind="textInput: search" autofocus>
       <div class="autocomplete"></div>
-      <div class="info-grp" data-bind="visible: resultsVisible">
+      <div class="info-grp hidden" data-bind="visible: displayResult, css: {hidden: false}">
         <div class="results">
           <div data-bind="template: { foreach: resultsView,
                         beforeRemove: hideResult,
@@ -44,23 +44,31 @@
                   <img class="img-responsive" data-bind="attr: { src: photo, alt: alt }" alt="">
                 </div>
               </div>
-
-            </div>
-          </div>
-          <div class="result" data-bind="visible: populated">
-            <div class="page-results">
-              <span>Showing Results</span>
-              <span data-bind="text: botLimit"></span>
-              <span>-</span>
-              <span data-bind="text: topLimit"></span>
-              <span class="rvs-btn" data-bind="click: prevList"></span>
-              <span class="fwd-btn" data-bind="click: nextList"></span>
             </div>
           </div>
         </div>
-        <div class="result" data-bind="visible: populated, text: showText, click: toggleResultsVisible"></div>
+        <div class="page-results">
+          <div>
+            <span>Showing Results</span>
+            <span data-bind="text: botLimit"></span>
+            <span>-</span>
+            <span data-bind="text: topLimit"></span>
+            <span class="rvs-btn" data-bind="click: prevList"></span>
+            <span class="fwd-btn" data-bind="click: nextList"></span>
+          </div>
+        </div>
       </div>
-
+      <div class="info-display hidden" data-bind="css: {hidden: false}">
+        <div data-bind="visible: searchResult">
+          <span>Show all results for </span>
+          <span class="searchTitle" data-bind="text: search"></span>
+        </div>
+        <div data-bind="visible: itemInfo, template: {foreach: selected}">
+          <span class="currentItem-title" data-bind="text: title"></span>
+          <span class="currentItem-rating" data-bind="text: rating"></span>
+        </div>
+      </div>
+    </div>
     </div>
     <div class="map-canvas"></div>
 
@@ -84,6 +92,9 @@
     <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="bower_components/knockout/dist/knockout.js"></script>
     <script src="bower_components/offline/offline.min.js"></script>
+    <script src="bower_components/css-element-queries/src/ElementQueries.js"></script>
+    <script src="bower_components/css-element-queries/src/ResizeSensor.js"></script>
+    <script src="bower_components/jquery-hoverIntent/jquery.hoverIntent.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
