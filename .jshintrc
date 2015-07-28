@@ -22,7 +22,6 @@
     "ko": false,
     "$": false,
     "Offline": false,
-    "alert": false,
-    "ResizeSensor": false
+    "alert": false
   }
 }

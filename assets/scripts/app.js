@@ -129,7 +129,7 @@ var ViewModel = function () {
     // Initial location for google map
     self.location = ko.observable('');
 
-    // Deprecated values
+    //
     self.searchField = ko.observable('location');
     self.search = ko.observable(self.location());
     self.geocoder = new google.maps.Geocoder();
@@ -137,20 +137,16 @@ var ViewModel = function () {
     // Initialize instance of Model
     self.placesList = new PlacesList();
 
-    // Grab DOM elements to attach to map and initialize google
-    // search box
+    // DOM element to initialize google search box
     self.input = $('.pac-input')[0];
 
     // Initialize values for list tracking and view display
     self.selected = ko.observable();
-    // self.showText = ko.observable('Hide Results');
     self.resultsVisible = ko.observable(false);
-    // self.displayItem = ko.observable();
     self.currentItem = new self.placesList.Item();
     self.keys = ko.observableArray().extend({ rateLimit: 250 });
     self.list = ko.observableArray([]);
     self.currentList = ko.observable();
-    // self.searchInfo = ko.observable(false);
     self.populated = ko.observable(false);
     self.resultsView = ko.computed(function() {
       if(self.populated()) {
@@ -174,6 +170,7 @@ var ViewModel = function () {
       }
     });
 
+    // Updates upper limit of currently displayed results
     self.topLimit = ko.computed(function() {
       if (self.populated()) {
         return self.currentList()[1];
@@ -182,6 +179,7 @@ var ViewModel = function () {
       }
     });
 
+    // Updates lower limit of currently displayed results
     self.botLimit = ko.computed(function() {
       if (self.populated()) {
         return self.currentList()[0] + 1;
@@ -190,6 +188,7 @@ var ViewModel = function () {
       }
     });
 
+    // Displays tab view of general results
     self.searchResult = ko.computed(function() {
       if (self.populated() && !self.selected()) {
         return !self.resultsVisible();
@@ -198,6 +197,7 @@ var ViewModel = function () {
       }
     });
 
+    // Displays tab view of selected result
     self.itemInfo = ko.computed(function() {
       if (self.populated() && self.selected()) {
         return !self.resultsVisible();
@@ -206,6 +206,7 @@ var ViewModel = function () {
       }
     });
 
+    // Displays list view of results
     self.displayResult = ko.computed(function() {
       if (self.populated()) {
         return self.resultsVisible();
@@ -213,8 +214,6 @@ var ViewModel = function () {
         return false;
       }
     });
-
-
 
     // Sets default element if no element is passed into function
     if (!element) {
@@ -231,11 +230,7 @@ var ViewModel = function () {
     // and Autocomplete features
     self.searchBox = new google.maps.places.SearchBox((self.input));
 
-    /* TODO: Completely remove geocoding functionality and
-     * excluively rely upon the search box functionality
-     */
-
-    // Initial call to Geocoding to set map at default location
+    // Initial call to Geocoding to establish map at default location
     self.googleCode();
 
     // Adds listener to search box to detect submission either by
@@ -282,17 +277,12 @@ var ViewModel = function () {
       alert('Internet is disconnected');
     });
 
+    // Delay initializiation of functions
     window.onload = function() {
+      // Adds hover listener to collapse/expand results list
+      $('.prev-contain').hoverIntent(self.onResultsVisible, self.offResultsVisible);
 
-      // new ResizeSensor($('.prev-contain'), function() {
-      //   var target = $('.prev-contain');
-      //   var height = target.height() + 10;
-      //   var width = target.width() + 15;
-      //   $('.copy-contain').css({height: height, width: width});
-      // });
-
-      $('.prev-contain').hoverIntent(self.onResults, self.offResults);
-
+      // Callback to create copy element to prevent overlap of autocomplete
       var cb1 = function(target, copy) {
         if (target.css('display') === 'none') {
           copy.slideUp();
@@ -302,14 +292,17 @@ var ViewModel = function () {
         }
       };
 
+      // Establish variables for mutation observer
       var p1 = [$('.pac-container'), $('.autocomplete'), cb1];
       var parings = [p1];
       var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 
+      // Event listener triggered on mutation of target element
       var setObserver = function(observer, element, bubbles) {
         observer.observe(element, { attributes: true, subtree: bubbles, attributeFilter: ['style'] });
       };
 
+      // Iterate over groupings for mutation event listeners
       parings.forEach(function(pair) {
         var target = pair[0],
             copy = pair[1],
@@ -321,12 +314,6 @@ var ViewModel = function () {
         });
         setObserver(observer, element, bubbles);
       });
-
-      // var observer = new MutationObserver(function() {
-      //   callback(t1, c1);
-      // });
-
-      // observer.observe(element, { attributes: true, subtree: bubbles, attributeFilter: ['style'] });
     };
   };
 
@@ -802,22 +789,23 @@ var ViewModel = function () {
     return true;
   };
 
-  /** Toggles display of Results DOM upon click
-   * @method toggleResultsVisible
+  /** Turns off display of Results DOM upon click
+   * @method offResultsVisible
    * @memberof ViewModel
    */
   self.offResultsVisible = function() {
-    // if (self.resultsVisible()) {
-    //   self.showText('Show Results for ' + self.search());
-    // } else {
-    //   self.showText('Hide Results');
-    // }
     self.resultsVisible(false);
     return true;
   };
 
+  /** Turns on display of Results DOM upon click
+   * @method onResultsVisible
+   * @memberof ViewModel
+   */
   self.onResultsVisible = function() {
-    self.resultsVisible(true);
+    if (self.populated()) {
+      self.resultsVisible(true);
+    }
     return true;
   };
 
@@ -847,16 +835,6 @@ var ViewModel = function () {
       item.showing(false);
     }
     return true;
-  };
-
-  self.onResults = function() {
-    if (self.populated()) {
-      self.resultsVisible(true);
-    }
-  };
-
-  self.offResults = function() {
-    self.resultsVisible(false);
   };
 
   /** Animation callback for the secondary information display

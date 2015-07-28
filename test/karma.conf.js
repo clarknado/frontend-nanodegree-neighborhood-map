@@ -26,8 +26,6 @@ module.exports = function(config) {
       'bower_components/bootstrap/dist/js/bootstrap.js',
       'bower_components/knockout/dist/knockout.js',
       'bower_components/offline/offline.min.js',
-      'bower_components/css-element-queries/src/ElementQueries.js',
-      'bower_components/css-element-queries/src/ResizeSensor.js',
       'bower_components/jquery-hoverIntent/jquery.hoverIntent.js',
       // endbower
       "assets/scripts/**/*.js",
