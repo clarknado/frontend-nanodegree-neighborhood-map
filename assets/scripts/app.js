@@ -338,6 +338,7 @@ var ViewModel = function () {
   self.query = function(places) {
     if (places !== undefined) {
       self.googleResponseParse(places);
+      $('.pac-input').blur();
     }
   };
 
@@ -805,14 +806,18 @@ var ViewModel = function () {
    * @method toggleResultsVisible
    * @memberof ViewModel
    */
-  self.toggleResultsVisible = function() {
-    if (self.resultsVisible()) {
-      self.showText('Show Results for ' + self.search());
-    } else {
-      self.showText('Hide Results');
-    }
-    self.resultsVisible(!self.resultsVisible());
-    console.log(self.resultsVisible());
+  self.offResultsVisible = function() {
+    // if (self.resultsVisible()) {
+    //   self.showText('Show Results for ' + self.search());
+    // } else {
+    //   self.showText('Hide Results');
+    // }
+    self.resultsVisible(false);
+    return true;
+  };
+
+  self.onResultsVisible = function() {
+    self.resultsVisible(true);
     return true;
   };
 

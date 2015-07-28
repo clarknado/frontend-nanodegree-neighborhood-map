@@ -58,7 +58,7 @@
           </div>
         </div>
       </div>
-      <div class="info-display hidden" data-bind="css: {hidden: false}">
+      <div class="info-display hidden" data-bind="css: {hidden: false}, click: onResultsVisible">
         <div data-bind="visible: searchResult">
           <span>Show all results for </span>
           <span class="searchTitle" data-bind="text: search"></span>
@@ -70,7 +70,7 @@
       </div>
     </div>
     </div>
-    <div class="map-canvas"></div>
+    <div class="map-canvas" data-bind="click: offResultsVisible"></div>
 
 
 
